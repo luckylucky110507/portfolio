@@ -813,7 +813,6 @@ export default function App() {
               <a href="https://doi.org/10.26562/irjcs.2025.v1212.08" className="research-doi" target="_blank" rel="noreferrer">doi.org/10.26562/irjcs.2025.v1212.08</a>
               <div className="research-pdf-btns">
                 <a href="/research_paper.pdf" target="_blank" rel="noreferrer" className="btn-pdf-view">📄 View Paper</a>
-                <a href="/research_paper.pdf" download="Lucky_Kumari_Research_Paper.pdf" className="btn-pdf-download">⬇ Download PDF</a>
               </div>
             </div>
           </Reveal>
