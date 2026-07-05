@@ -812,7 +812,7 @@ export default function App() {
               <p className="research-venue">IRJCS, Volume 12, Issue 12 (December 2025)</p>
               <a href="https://doi.org/10.26562/irjcs.2025.v1212.08" className="research-doi" target="_blank" rel="noreferrer">doi.org/10.26562/irjcs.2025.v1212.08</a>
               <div className="research-pdf-btns">
-                <a href="/research_paper.pdf" target="_blank" rel="noreferrer" className="btn-pdf-view">📄 View Paper</a>
+                <a href="/research paper.pdf" target="_blank" rel="noreferrer" className="btn-pdf-view">📄 View Paper</a>
               </div>
             </div>
           </Reveal>
