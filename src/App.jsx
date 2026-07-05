@@ -247,102 +247,107 @@ function Particles() {
 function DnaHelix() {
   return (
     <div className="dna-wrap">
-      <svg className="dna-svg" viewBox="0 0 1800 200" preserveAspectRatio="none">
+      <svg className="dna-svg" viewBox="0 0 1800 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="dg"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <linearGradient id="dg1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.9"/>
-            <stop offset="25%" stopColor="#5ce1e6" stopOpacity="1"/>
-            <stop offset="50%" stopColor="#7c3aed" stopOpacity="0.9"/>
-            <stop offset="75%" stopColor="#5ce1e6" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.9"/>
+          <filter id="wglow">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="wg1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#7c3aed" stopOpacity="0"/>
+            <stop offset="15%" stopColor="#7c3aed" stopOpacity="0.9"/>
+            <stop offset="50%" stopColor="#5ce1e6" stopOpacity="1"/>
+            <stop offset="85%" stopColor="#a855f7" stopOpacity="0.9"/>
+            <stop offset="100%" stopColor="#a855f7" stopOpacity="0"/>
           </linearGradient>
-          <linearGradient id="dg2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#5ce1e6" stopOpacity="0.9"/>
-            <stop offset="25%" stopColor="#a855f7" stopOpacity="1"/>
-            <stop offset="50%" stopColor="#5ce1e6" stopOpacity="0.9"/>
-            <stop offset="75%" stopColor="#a855f7" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#5ce1e6" stopOpacity="0.9"/>
+          <linearGradient id="wg2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#5ce1e6" stopOpacity="0"/>
+            <stop offset="15%" stopColor="#5ce1e6" stopOpacity="0.7"/>
+            <stop offset="50%" stopColor="#a855f7" stopOpacity="0.9"/>
+            <stop offset="85%" stopColor="#7c3aed" stopOpacity="0.7"/>
+            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0"/>
+          </linearGradient>
+          <linearGradient id="wg3" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#a855f7" stopOpacity="0"/>
+            <stop offset="15%" stopColor="#a855f7" stopOpacity="0.5"/>
+            <stop offset="50%" stopColor="#7c3aed" stopOpacity="0.7"/>
+            <stop offset="85%" stopColor="#5ce1e6" stopOpacity="0.5"/>
+            <stop offset="100%" stopColor="#5ce1e6" stopOpacity="0"/>
           </linearGradient>
         </defs>
-        <path d={`M 0 100 L 0 100.00 L 5 103.35 L 10 106.68 L 15 109.98 L 20 113.23 L 25 116.42 L 30 119.52 L 35 122.53 L 40 125.44 L 45 128.21 L 50 130.85 L 55 133.34 L 60 135.67 L 65 137.82 L 70 139.79 L 75 141.57 L 80 143.14 L 85 144.50 L 90 145.65 L 95 146.57 L 100 147.27 L 105 147.74 L 110 147.97 L 115 147.97 L 120 147.74 L 125 147.27 L 130 146.57 L 135 145.65 L 140 144.50 L 145 143.14 L 150 141.57 L 155 139.79 L 160 137.82 L 165 135.67 L 170 133.34 L 175 130.85 L 180 128.21 L 185 125.44 L 190 122.53 L 195 119.52 L 200 116.42 L 205 113.23 L 210 109.98 L 215 106.68 L 220 103.35 L 225 100.00 L 230 96.65 L 235 93.32 L 240 90.02 L 245 86.77 L 250 83.58 L 255 80.48 L 260 77.47 L 265 74.56 L 270 71.79 L 275 69.15 L 280 66.66 L 285 64.33 L 290 62.18 L 295 60.21 L 300 58.43 L 305 56.86 L 310 55.50 L 315 54.35 L 320 53.43 L 325 52.73 L 330 52.26 L 335 52.03 L 340 52.03 L 345 52.26 L 350 52.73 L 355 53.43 L 360 54.35 L 365 55.50 L 370 56.86 L 375 58.43 L 380 60.21 L 385 62.18 L 390 64.33 L 395 66.66 L 400 69.15 L 405 71.79 L 410 74.56 L 415 77.47 L 420 80.48 L 425 83.58 L 430 86.77 L 435 90.02 L 440 93.32 L 445 96.65 L 450 100.00 L 455 103.35 L 460 106.68 L 465 109.98 L 470 113.23 L 475 116.42 L 480 119.52 L 485 122.53 L 490 125.44 L 495 128.21 L 500 130.85 L 505 133.34 L 510 135.67 L 515 137.82 L 520 139.79 L 525 141.57 L 530 143.14 L 535 144.50 L 540 145.65 L 545 146.57 L 550 147.27 L 555 147.74 L 560 147.97 L 565 147.97 L 570 147.74 L 575 147.27 L 580 146.57 L 585 145.65 L 590 144.50 L 595 143.14 L 600 141.57 L 605 139.79 L 610 137.82 L 615 135.67 L 620 133.34 L 625 130.85 L 630 128.21 L 635 125.44 L 640 122.53 L 645 119.52 L 650 116.42 L 655 113.23 L 660 109.98 L 665 106.68 L 670 103.35 L 675 100.00 L 680 96.65 L 685 93.32 L 690 90.02 L 695 86.77 L 700 83.58 L 705 80.48 L 710 77.47 L 715 74.56 L 720 71.79 L 725 69.15 L 730 66.66 L 735 64.33 L 740 62.18 L 745 60.21 L 750 58.43 L 755 56.86 L 760 55.50 L 765 54.35 L 770 53.43 L 775 52.73 L 780 52.26 L 785 52.03 L 790 52.03 L 795 52.26 L 800 52.73 L 805 53.43 L 810 54.35 L 815 55.50 L 820 56.86 L 825 58.43 L 830 60.21 L 835 62.18 L 840 64.33 L 845 66.66 L 850 69.15 L 855 71.79 L 860 74.56 L 865 77.47 L 870 80.48 L 875 83.58 L 880 86.77 L 885 90.02 L 890 93.32 L 895 96.65 L 900 100.00 L 905 103.35 L 910 106.68 L 915 109.98 L 920 113.23 L 925 116.42 L 930 119.52 L 935 122.53 L 940 125.44 L 945 128.21 L 950 130.85 L 955 133.34 L 960 135.67 L 965 137.82 L 970 139.79 L 975 141.57 L 980 143.14 L 985 144.50 L 990 145.65 L 995 146.57 L 1000 147.27 L 1005 147.74 L 1010 147.97 L 1015 147.97 L 1020 147.74 L 1025 147.27 L 1030 146.57 L 1035 145.65 L 1040 144.50 L 1045 143.14 L 1050 141.57 L 1055 139.79 L 1060 137.82 L 1065 135.67 L 1070 133.34 L 1075 130.85 L 1080 128.21 L 1085 125.44 L 1090 122.53 L 1095 119.52 L 1100 116.42 L 1105 113.23 L 1110 109.98 L 1115 106.68 L 1120 103.35 L 1125 100.00 L 1130 96.65 L 1135 93.32 L 1140 90.02 L 1145 86.77 L 1150 83.58 L 1155 80.48 L 1160 77.47 L 1165 74.56 L 1170 71.79 L 1175 69.15 L 1180 66.66 L 1185 64.33 L 1190 62.18 L 1195 60.21 L 1200 58.43 L 1205 56.86 L 1210 55.50 L 1215 54.35 L 1220 53.43 L 1225 52.73 L 1230 52.26 L 1235 52.03 L 1240 52.03 L 1245 52.26 L 1250 52.73 L 1255 53.43 L 1260 54.35 L 1265 55.50 L 1270 56.86 L 1275 58.43 L 1280 60.21 L 1285 62.18 L 1290 64.33 L 1295 66.66 L 1300 69.15 L 1305 71.79 L 1310 74.56 L 1315 77.47 L 1320 80.48 L 1325 83.58 L 1330 86.77 L 1335 90.02 L 1340 93.32 L 1345 96.65 L 1350 100.00 L 1355 103.35 L 1360 106.68 L 1365 109.98 L 1370 113.23 L 1375 116.42 L 1380 119.52 L 1385 122.53 L 1390 125.44 L 1395 128.21 L 1400 130.85 L 1405 133.34 L 1410 135.67 L 1415 137.82 L 1420 139.79 L 1425 141.57 L 1430 143.14 L 1435 144.50 L 1440 145.65 L 1445 146.57 L 1450 147.27 L 1455 147.74 L 1460 147.97 L 1465 147.97 L 1470 147.74 L 1475 147.27 L 1480 146.57 L 1485 145.65 L 1490 144.50 L 1495 143.14 L 1500 141.57 L 1505 139.79 L 1510 137.82 L 1515 135.67 L 1520 133.34 L 1525 130.85 L 1530 128.21 L 1535 125.44 L 1540 122.53 L 1545 119.52 L 1550 116.42 L 1555 113.23 L 1560 109.98 L 1565 106.68 L 1570 103.35 L 1575 100.00 L 1580 96.65 L 1585 93.32 L 1590 90.02 L 1595 86.77 L 1600 83.58 L 1605 80.48 L 1610 77.47 L 1615 74.56 L 1620 71.79 L 1625 69.15 L 1630 66.66 L 1635 64.33 L 1640 62.18 L 1645 60.21 L 1650 58.43 L 1655 56.86 L 1660 55.50 L 1665 54.35 L 1670 53.43 L 1675 52.73 L 1680 52.26 L 1685 52.03 L 1690 52.03 L 1695 52.26 L 1700 52.73 L 1705 53.43 L 1710 54.35 L 1715 55.50 L 1720 56.86 L 1725 58.43 L 1730 60.21 L 1735 62.18 L 1740 64.33 L 1745 66.66 L 1750 69.15 L 1755 71.79 L 1760 74.56 L 1765 77.47 L 1770 80.48 L 1775 83.58 L 1780 86.77 L 1785 90.02 L 1790 93.32 L 1795 96.65`} stroke="url(#dg1)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
-        <path d={`M 0 100 L 0 100.00 L 5 96.65 L 10 93.32 L 15 90.02 L 20 86.77 L 25 83.58 L 30 80.48 L 35 77.47 L 40 74.56 L 45 71.79 L 50 69.15 L 55 66.66 L 60 64.33 L 65 62.18 L 70 60.21 L 75 58.43 L 80 56.86 L 85 55.50 L 90 54.35 L 95 53.43 L 100 52.73 L 105 52.26 L 110 52.03 L 115 52.03 L 120 52.26 L 125 52.73 L 130 53.43 L 135 54.35 L 140 55.50 L 145 56.86 L 150 58.43 L 155 60.21 L 160 62.18 L 165 64.33 L 170 66.66 L 175 69.15 L 180 71.79 L 185 74.56 L 190 77.47 L 195 80.48 L 200 83.58 L 205 86.77 L 210 90.02 L 215 93.32 L 220 96.65 L 225 100.00 L 230 103.35 L 235 106.68 L 240 109.98 L 245 113.23 L 250 116.42 L 255 119.52 L 260 122.53 L 265 125.44 L 270 128.21 L 275 130.85 L 280 133.34 L 285 135.67 L 290 137.82 L 295 139.79 L 300 141.57 L 305 143.14 L 310 144.50 L 315 145.65 L 320 146.57 L 325 147.27 L 330 147.74 L 335 147.97 L 340 147.97 L 345 147.74 L 350 147.27 L 355 146.57 L 360 145.65 L 365 144.50 L 370 143.14 L 375 141.57 L 380 139.79 L 385 137.82 L 390 135.67 L 395 133.34 L 400 130.85 L 405 128.21 L 410 125.44 L 415 122.53 L 420 119.52 L 425 116.42 L 430 113.23 L 435 109.98 L 440 106.68 L 445 103.35 L 450 100.00 L 455 96.65 L 460 93.32 L 465 90.02 L 470 86.77 L 475 83.58 L 480 80.48 L 485 77.47 L 490 74.56 L 495 71.79 L 500 69.15 L 505 66.66 L 510 64.33 L 515 62.18 L 520 60.21 L 525 58.43 L 530 56.86 L 535 55.50 L 540 54.35 L 545 53.43 L 550 52.73 L 555 52.26 L 560 52.03 L 565 52.03 L 570 52.26 L 575 52.73 L 580 53.43 L 585 54.35 L 590 55.50 L 595 56.86 L 600 58.43 L 605 60.21 L 610 62.18 L 615 64.33 L 620 66.66 L 625 69.15 L 630 71.79 L 635 74.56 L 640 77.47 L 645 80.48 L 650 83.58 L 655 86.77 L 660 90.02 L 665 93.32 L 670 96.65 L 675 100.00 L 680 103.35 L 685 106.68 L 690 109.98 L 695 113.23 L 700 116.42 L 705 119.52 L 710 122.53 L 715 125.44 L 720 128.21 L 725 130.85 L 730 133.34 L 735 135.67 L 740 137.82 L 745 139.79 L 750 141.57 L 755 143.14 L 760 144.50 L 765 145.65 L 770 146.57 L 775 147.27 L 780 147.74 L 785 147.97 L 790 147.97 L 795 147.74 L 800 147.27 L 805 146.57 L 810 145.65 L 815 144.50 L 820 143.14 L 825 141.57 L 830 139.79 L 835 137.82 L 840 135.67 L 845 133.34 L 850 130.85 L 855 128.21 L 860 125.44 L 865 122.53 L 870 119.52 L 875 116.42 L 880 113.23 L 885 109.98 L 890 106.68 L 895 103.35 L 900 100.00 L 905 96.65 L 910 93.32 L 915 90.02 L 920 86.77 L 925 83.58 L 930 80.48 L 935 77.47 L 940 74.56 L 945 71.79 L 950 69.15 L 955 66.66 L 960 64.33 L 965 62.18 L 970 60.21 L 975 58.43 L 980 56.86 L 985 55.50 L 990 54.35 L 995 53.43 L 1000 52.73 L 1005 52.26 L 1010 52.03 L 1015 52.03 L 1020 52.26 L 1025 52.73 L 1030 53.43 L 1035 54.35 L 1040 55.50 L 1045 56.86 L 1050 58.43 L 1055 60.21 L 1060 62.18 L 1065 64.33 L 1070 66.66 L 1075 69.15 L 1080 71.79 L 1085 74.56 L 1090 77.47 L 1095 80.48 L 1100 83.58 L 1105 86.77 L 1110 90.02 L 1115 93.32 L 1120 96.65 L 1125 100.00 L 1130 103.35 L 1135 106.68 L 1140 109.98 L 1145 113.23 L 1150 116.42 L 1155 119.52 L 1160 122.53 L 1165 125.44 L 1170 128.21 L 1175 130.85 L 1180 133.34 L 1185 135.67 L 1190 137.82 L 1195 139.79 L 1200 141.57 L 1205 143.14 L 1210 144.50 L 1215 145.65 L 1220 146.57 L 1225 147.27 L 1230 147.74 L 1235 147.97 L 1240 147.97 L 1245 147.74 L 1250 147.27 L 1255 146.57 L 1260 145.65 L 1265 144.50 L 1270 143.14 L 1275 141.57 L 1280 139.79 L 1285 137.82 L 1290 135.67 L 1295 133.34 L 1300 130.85 L 1305 128.21 L 1310 125.44 L 1315 122.53 L 1320 119.52 L 1325 116.42 L 1330 113.23 L 1335 109.98 L 1340 106.68 L 1345 103.35 L 1350 100.00 L 1355 96.65 L 1360 93.32 L 1365 90.02 L 1370 86.77 L 1375 83.58 L 1380 80.48 L 1385 77.47 L 1390 74.56 L 1395 71.79 L 1400 69.15 L 1405 66.66 L 1410 64.33 L 1415 62.18 L 1420 60.21 L 1425 58.43 L 1430 56.86 L 1435 55.50 L 1440 54.35 L 1445 53.43 L 1450 52.73 L 1455 52.26 L 1460 52.03 L 1465 52.03 L 1470 52.26 L 1475 52.73 L 1480 53.43 L 1485 54.35 L 1490 55.50 L 1495 56.86 L 1500 58.43 L 1505 60.21 L 1510 62.18 L 1515 64.33 L 1520 66.66 L 1525 69.15 L 1530 71.79 L 1535 74.56 L 1540 77.47 L 1545 80.48 L 1550 83.58 L 1555 86.77 L 1560 90.02 L 1565 93.32 L 1570 96.65 L 1575 100.00 L 1580 103.35 L 1585 106.68 L 1590 109.98 L 1595 113.23 L 1600 116.42 L 1605 119.52 L 1610 122.53 L 1615 125.44 L 1620 128.21 L 1625 130.85 L 1630 133.34 L 1635 135.67 L 1640 137.82 L 1645 139.79 L 1650 141.57 L 1655 143.14 L 1660 144.50 L 1665 145.65 L 1670 146.57 L 1675 147.27 L 1680 147.74 L 1685 147.97 L 1690 147.97 L 1695 147.74 L 1700 147.27 L 1705 146.57 L 1710 145.65 L 1715 144.50 L 1720 143.14 L 1725 141.57 L 1730 139.79 L 1735 137.82 L 1740 135.67 L 1745 133.34 L 1750 130.85 L 1755 128.21 L 1760 125.44 L 1765 122.53 L 1770 119.52 L 1775 116.42 L 1780 113.23 L 1785 109.98 L 1790 106.68 L 1795 103.35`} stroke="url(#dg2)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
-        <g filter="url(#dg)"><line x1="0.0" y1="100.0" x2="0.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="0.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="0.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="25.0" y1="116.4" x2="25.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="25.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="25.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="50.0" y1="130.9" x2="50.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="50.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="50.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="75.0" y1="141.6" x2="75.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="75.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="75.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="100.0" y1="147.3" x2="100.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="100.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="100.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="125.0" y1="147.3" x2="125.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="125.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="125.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="150.0" y1="141.6" x2="150.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="150.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="150.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="175.0" y1="130.9" x2="175.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="175.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="175.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="200.0" y1="116.4" x2="200.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="200.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="200.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="225.0" y1="100.0" x2="225.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="225.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="225.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="250.0" y1="83.6" x2="250.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="250.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="250.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="275.0" y1="69.1" x2="275.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="275.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="275.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="300.0" y1="58.4" x2="300.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="300.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="300.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="325.0" y1="52.7" x2="325.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="325.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="325.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="350.0" y1="52.7" x2="350.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="350.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="350.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="375.0" y1="58.4" x2="375.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="375.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="375.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="400.0" y1="69.1" x2="400.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="400.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="400.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="425.0" y1="83.6" x2="425.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="425.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="425.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="450.0" y1="100.0" x2="450.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="450.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="450.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="475.0" y1="116.4" x2="475.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="475.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="475.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="500.0" y1="130.9" x2="500.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="500.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="500.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="525.0" y1="141.6" x2="525.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="525.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="525.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="550.0" y1="147.3" x2="550.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="550.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="550.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="575.0" y1="147.3" x2="575.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="575.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="575.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="600.0" y1="141.6" x2="600.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="600.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="600.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="625.0" y1="130.9" x2="625.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="625.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="625.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="650.0" y1="116.4" x2="650.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="650.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="650.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="675.0" y1="100.0" x2="675.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="675.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="675.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="700.0" y1="83.6" x2="700.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="700.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="700.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="725.0" y1="69.1" x2="725.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="725.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="725.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="750.0" y1="58.4" x2="750.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="750.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="750.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="775.0" y1="52.7" x2="775.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="775.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="775.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="800.0" y1="52.7" x2="800.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="800.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="800.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="825.0" y1="58.4" x2="825.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="825.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="825.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="850.0" y1="69.1" x2="850.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="850.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="850.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="875.0" y1="83.6" x2="875.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="875.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="875.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="900.0" y1="100.0" x2="900.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="900.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="900.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="925.0" y1="116.4" x2="925.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="925.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="925.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="950.0" y1="130.9" x2="950.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="950.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="950.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="975.0" y1="141.6" x2="975.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="975.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="975.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1000.0" y1="147.3" x2="1000.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1000.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1000.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1025.0" y1="147.3" x2="1025.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1025.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1025.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1050.0" y1="141.6" x2="1050.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1050.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1050.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1075.0" y1="130.9" x2="1075.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1075.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1075.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1100.0" y1="116.4" x2="1100.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1100.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1100.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1125.0" y1="100.0" x2="1125.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1125.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1125.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1150.0" y1="83.6" x2="1150.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1150.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1150.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1175.0" y1="69.1" x2="1175.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1175.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1175.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1200.0" y1="58.4" x2="1200.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1200.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1200.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1225.0" y1="52.7" x2="1225.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1225.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1225.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1250.0" y1="52.7" x2="1250.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1250.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1250.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1275.0" y1="58.4" x2="1275.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1275.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1275.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1300.0" y1="69.1" x2="1300.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1300.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1300.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1325.0" y1="83.6" x2="1325.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1325.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1325.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1350.0" y1="100.0" x2="1350.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1350.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1350.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1375.0" y1="116.4" x2="1375.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1375.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1375.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1400.0" y1="130.9" x2="1400.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1400.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1400.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1425.0" y1="141.6" x2="1425.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1425.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1425.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1450.0" y1="147.3" x2="1450.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1450.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1450.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1475.0" y1="147.3" x2="1475.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1475.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1475.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1500.0" y1="141.6" x2="1500.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1500.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1500.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1525.0" y1="130.9" x2="1525.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1525.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1525.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1550.0" y1="116.4" x2="1550.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1550.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1550.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1575.0" y1="100.0" x2="1575.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1575.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1575.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1600.0" y1="83.6" x2="1600.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1600.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1600.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1625.0" y1="69.1" x2="1625.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1625.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1625.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1650.0" y1="58.4" x2="1650.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1650.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1650.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1675.0" y1="52.7" x2="1675.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1675.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1675.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1700.0" y1="52.7" x2="1700.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1700.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1700.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1725.0" y1="58.4" x2="1725.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1725.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1725.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1750.0" y1="69.1" x2="1750.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1750.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1750.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
-        <g filter="url(#dg)"><line x1="1775.0" y1="83.6" x2="1775.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1775.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1775.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
+        {/* Wave lines - multiple overlapping sine waves like image 2 */}
+        {[
+          { amp:90, freq:0.007, phase:0,    cy:160, grad:'wg1', sw:2.5, delay:'0s' },
+          { amp:75, freq:0.009, phase:1.2,  cy:160, grad:'wg2', sw:2,   delay:'-2s' },
+          { amp:60, freq:0.006, phase:2.4,  cy:160, grad:'wg1', sw:1.5, delay:'-4s' },
+          { amp:100,freq:0.008, phase:0.6,  cy:160, grad:'wg3', sw:2.2, delay:'-1s' },
+          { amp:50, freq:0.011, phase:1.8,  cy:160, grad:'wg2', sw:1.2, delay:'-3s' },
+          { amp:80, freq:0.005, phase:3.0,  cy:160, grad:'wg3', sw:1.8, delay:'-5s' },
+          { amp:40, freq:0.013, phase:0.9,  cy:160, grad:'wg1', sw:1,   delay:'-6s' },
+          { amp:65, freq:0.007, phase:2.1,  cy:160, grad:'wg2', sw:1.6, delay:'-2.5s' },
+        ].map((w, wi) => {
+          const pts = Array.from({length:361}, (_, i) => {
+            const x = i * 5
+            const y = w.cy + w.amp * Math.sin(w.freq * x + w.phase)
+            return `${i===0?'M':'L'} ${x} ${y.toFixed(1)}`
+          }).join(' ')
+          return (
+            <path key={wi} d={pts}
+              stroke={`url(#${w.grad})`}
+              strokeWidth={w.sw}
+              fill="none"
+              filter="url(#wglow)"
+              opacity="0.85">
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                from="0 0" to="-900 0"
+                dur="8s"
+                begin={w.delay}
+                repeatCount="indefinite"
+                additive="sum"/>
+            </path>
+          )
+        })}
+        {/* Duplicate set shifted by 900 for seamless loop */}
+        {[
+          { amp:90, freq:0.007, phase:0,    cy:160, grad:'wg1', sw:2.5, delay:'0s' },
+          { amp:75, freq:0.009, phase:1.2,  cy:160, grad:'wg2', sw:2,   delay:'-2s' },
+          { amp:60, freq:0.006, phase:2.4,  cy:160, grad:'wg1', sw:1.5, delay:'-4s' },
+          { amp:100,freq:0.008, phase:0.6,  cy:160, grad:'wg3', sw:2.2, delay:'-1s' },
+          { amp:50, freq:0.011, phase:1.8,  cy:160, grad:'wg2', sw:1.2, delay:'-3s' },
+          { amp:80, freq:0.005, phase:3.0,  cy:160, grad:'wg3', sw:1.8, delay:'-5s' },
+          { amp:40, freq:0.013, phase:0.9,  cy:160, grad:'wg1', sw:1,   delay:'-6s' },
+          { amp:65, freq:0.007, phase:2.1,  cy:160, grad:'wg2', sw:1.6, delay:'-2.5s' },
+        ].map((w, wi) => {
+          const pts = Array.from({length:361}, (_, i) => {
+            const x = i * 5 + 900
+            const y = w.cy + w.amp * Math.sin(w.freq * x + w.phase)
+            return `${i===0?'M':'L'} ${x} ${y.toFixed(1)}`
+          }).join(' ')
+          return (
+            <path key={'b'+wi} d={pts}
+              stroke={`url(#${w.grad})`}
+              strokeWidth={w.sw}
+              fill="none"
+              filter="url(#wglow)"
+              opacity="0.85">
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                from="0 0" to="-900 0"
+                dur="8s"
+                begin={w.delay}
+                repeatCount="indefinite"
+                additive="sum"/>
+            </path>
+          )
+        })}
       </svg>
     </div>
   )
 }
+
 /* ── Bot Avatar ── */
 function BotAvatar({ size = 32 }) {
   return (
