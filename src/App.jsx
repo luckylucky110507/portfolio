@@ -245,31 +245,30 @@ function Particles() {
 
 /* ── DNA Helix ── */
 function DnaHelix() {
-  const RUNGS = 18
+  const RUNGS = 24
+  // Double the path so seamless scroll works: draw 2 full cycles side by side
+  const pts1 = Array.from({length:360},(_,i)=>`L ${i*5} ${100+55*Math.sin(i*0.09)}`).join(' ')
+  const pts2 = Array.from({length:360},(_,i)=>`L ${i*5} ${100+55*Math.cos(i*0.09+Math.PI)}`).join(' ')
   return (
     <div className="dna-wrap">
-      <svg className="dna-svg" viewBox="0 0 900 200" preserveAspectRatio="none">
+      <svg className="dna-svg" viewBox="0 0 1800 200" preserveAspectRatio="none" style={{width:'200%',marginLeft:0}}>
         <defs>
           <filter id="dg"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           <linearGradient id="dg1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#7c3aed" stopOpacity="0"/>
-            <stop offset="20%" stopColor="#7c3aed" stopOpacity="1"/>
-            <stop offset="80%" stopColor="#5ce1e6" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#5ce1e6" stopOpacity="0"/>
+            <stop offset="0%" stopColor="#7c3aed" stopOpacity="1"/>
+            <stop offset="50%" stopColor="#5ce1e6" stopOpacity="1"/>
+            <stop offset="100%" stopColor="#7c3aed" stopOpacity="1"/>
           </linearGradient>
           <linearGradient id="dg2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#5ce1e6" stopOpacity="0"/>
-            <stop offset="20%" stopColor="#5ce1e6" stopOpacity="1"/>
-            <stop offset="80%" stopColor="#a855f7" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#a855f7" stopOpacity="0"/>
+            <stop offset="0%" stopColor="#5ce1e6" stopOpacity="1"/>
+            <stop offset="50%" stopColor="#a855f7" stopOpacity="1"/>
+            <stop offset="100%" stopColor="#5ce1e6" stopOpacity="1"/>
           </linearGradient>
         </defs>
-        <path d={`M 0 100 ${Array.from({length:180},(_,i)=>`L ${i*5} ${100+55*Math.sin(i*0.18)}`).join(' ')}`}
-          stroke="url(#dg1)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
-        <path d={`M 0 100 ${Array.from({length:180},(_,i)=>`L ${i*5} ${100+55*Math.cos(i*0.18+Math.PI)}`).join(' ')}`}
-          stroke="url(#dg2)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
-        {Array.from({length:RUNGS},(_,i)=>{
-          const t=i/RUNGS, x=t*900, ph=t*Math.PI*8
+        <path d={`M 0 100 ${pts1}`} stroke="url(#dg1)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
+        <path d={`M 0 100 ${pts2}`} stroke="url(#dg2)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
+        {Array.from({length:RUNGS*2},(_,i)=>{
+          const t=i/(RUNGS*2), x=t*1800, ph=t*Math.PI*16
           const y1=100+55*Math.sin(ph), y2=100+55*Math.cos(ph+Math.PI)
           const col=i%3===0?'#7c3aed':i%3===1?'#5ce1e6':'#a855f7'
           return (
@@ -748,6 +747,10 @@ export default function App() {
               <p className="research-authors">Komal Kumar, Lucky Kumari, Kritansh Pandey, Dr. Shivani Dubey, Neha Gupta, Vikas Yadav</p>
               <p className="research-venue">IRJCS, Volume 12, Issue 12 (December 2025)</p>
               <a href="https://doi.org/10.26562/irjcs.2025.v1212.08" className="research-doi" target="_blank" rel="noreferrer">doi.org/10.26562/irjcs.2025.v1212.08</a>
+              <div className="research-pdf-btns">
+                <a href="/research_paper.pdf" target="_blank" rel="noreferrer" className="btn-pdf-view">📄 View Paper</a>
+                <a href="/research_paper.pdf" download="Lucky_Kumari_Research_Paper.pdf" className="btn-pdf-download">⬇ Download PDF</a>
+              </div>
             </div>
           </Reveal>
         </section>
