@@ -1,748 +1,897 @@
-/* ═══════════════════════════════════════
-   SCROLL REVEAL
-═══════════════════════════════════════ */
-.reveal {
-  opacity: 0;
-  transform: translateY(36px);
-  transition: opacity .7s cubic-bezier(.215,.61,.355,1), transform .7s cubic-bezier(.215,.61,.355,1);
-}
-.revealed {
-  opacity: 1;
-  transform: translateY(0);
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+import './App.css'
+
+/* ── Profile data ── */
+const profile = {
+  name: 'Lucky Kumari',
+  bio: "Results-driven B.Tech Computer Science student (SGPA: 8.46/10) with a strong interest in Artificial Intelligence and Machine Learning. Proficient in Python, SQL, NLP, and Scikit-learn with hands-on experience building ML models, data pipelines, and BI dashboards. Completed AI/ML and Full Stack internships delivering production-quality projects.",
+  email: 'kumarilucky01437@gmail.com',
+  phone: '+91-7827843321',
+  linkedin: 'https://www.linkedin.com/in/lucky-kumari-3b83a2364',
+  github: 'https://github.com/luckylucky110507',
+  instagram: 'https://www.instagram.com/k11_lucky',
+  location: 'Delhi/NCR, India',
+  resumeUrl: '/Lucky-Resume.pdf',
+  photo: '/profile.jpeg',
 }
 
-/* ═══════════════════════════════════════
-   WELCOME SPLASH
-═══════════════════════════════════════ */
-.splash {
-  position: fixed; inset: 0; z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: opacity .7s ease, transform .7s ease;
-  opacity: 0;
-}
-.splash-in  { opacity: 1; }
-.splash-out { opacity: 0; transform: scale(1.06); pointer-events: none; }
-
-.splash-bg {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 40% 50%, #1a0a3d 0%, #080c14 60%);
-}
-.splash-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.splash-dot {
-  position: absolute; border-radius: 50%;
-  background: rgba(124,58,237,.5);
-  animation: float var(--dur,5s) ease-in-out var(--delay,0s) infinite;
+/* ── Scroll-reveal hook ── */
+function useInView(options = {}) {
+  const ref = useRef(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const el = ref.current; if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect() } }, { threshold: 0.12, ...options })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return [ref, inView]
 }
 
-.splash-content {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
-  text-align: center;
-}
-.splash-ring {
-  position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
-  width: 140px; height: 140px; border-radius: 50%;
-  border: 2px solid rgba(124,58,237,.4);
-  animation: splashRing 2.5s ease-in-out infinite;
-}
-@keyframes splashRing {
-  0%,100%{ transform:translateX(-50%) scale(1); opacity:.5; }
-  50%    { transform:translateX(-50%) scale(1.15); opacity:.15; }
-}
-.splash-photo {
-  width: 100px; height: 100px; border-radius: 50%;
-  object-fit: cover; object-position: top center;
-  border: 3px solid #7c3aed;
-  box-shadow: 0 0 0 6px rgba(124,58,237,.2), 0 20px 60px rgba(124,58,237,.5);
-  animation: float 5s ease-in-out infinite;
-}
-.splash-welcome {
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  color: var(--teal); letter-spacing: .15em; text-transform: uppercase;
-  font-weight: 600;
-  animation: slideUp .8s .3s ease both;
-}
-.splash-name {
-  font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 700;
-  color: var(--purple-light); line-height: 1.1;
-  animation: slideUp .8s .5s ease both;
-}
-.splash-role {
-  font-size: clamp(.85rem, 1.8vw, 1rem); color: var(--muted);
-  animation: slideUp .8s .7s ease both;
-}
-.splash-hint {
-  font-size: .78rem; color: rgba(255,255,255,.3);
-  margin-top: 8px;
-  animation: pulseHint 2.5s 1.5s ease-in-out infinite;
-}
-@keyframes pulseHint { 0%,100%{opacity:.3} 50%{opacity:.8} }
-
-/* main wrapper visibility */
-.main-hidden  { visibility: hidden; opacity: 0; }
-.main-visible { visibility: visible; opacity: 1; transition: opacity .5s ease; }
-
-/* ═══════════════════════════════════════
-   NAV
-═══════════════════════════════════════ */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 60px;
-  background: rgba(8,12,20,.85);
-  backdrop-filter: blur(24px);
-  border-bottom: 1px solid var(--border);
-}
-.brand { font-size: 1.3rem; font-weight: 700; color: var(--teal); letter-spacing: .02em; }
-.nav-links { display: flex; align-items: center; gap: 24px; font-size: .9rem; color: var(--muted); }
-.nav-links a { transition: color .2s; }
-.nav-links a:hover { color: var(--text); }
-.btn-nav-resume {
-  padding: 8px 18px; border-radius: 8px;
-  background: var(--blue-btn); color: #fff !important;
-  font-weight: 600; font-size: .85rem;
-  transition: opacity .2s, transform .2s, box-shadow .2s;
-}
-.btn-nav-resume:hover { opacity: .85; transform: translateY(-2px); box-shadow: 0 0 20px rgba(37,99,235,.5); }
-
-/* ═══════════════════════════════════════
-   HERO
-═══════════════════════════════════════ */
-.hero {
-  min-height: 100vh; padding: 120px 60px 80px;
-  display: flex; align-items: center; justify-content: space-between; gap: 40px;
-  position: relative; overflow: hidden;
-}
-.hero-blob {
-  position: absolute; top: 50%; right: 40px; transform: translateY(-55%);
-  width: 560px; height: 560px;
-  background: radial-gradient(ellipse, rgba(124,58,237,.55) 0%, rgba(88,28,235,.25) 45%, transparent 72%);
-  animation: blobMorph 9s ease-in-out infinite, float 10s ease-in-out infinite;
-  pointer-events: none; z-index: 0;
-}
-.hero-blob-2 {
-  right: unset; left: -100px; top: 20%;
-  width: 360px; height: 360px;
-  background: radial-gradient(ellipse, rgba(92,225,230,.12) 0%, transparent 70%);
-  animation-delay: 3s, 4s;
-}
-.hero-particle {
-  position: absolute; border-radius: 50%; pointer-events: none;
-  background: rgba(92,225,230,.55);
-  animation: float var(--dur,6s) ease-in-out var(--delay,0s) infinite;
+/* ── Animated section wrapper ── */
+function Reveal({ children, delay = 0, className = '' }) {
+  const [ref, inView] = useInView()
+  return (
+    <div ref={ref} className={`reveal ${inView ? 'revealed' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </div>
+  )
 }
 
-.hero-content { position: relative; z-index: 1; max-width: 580px; }
-.hero-greeting { font-size: clamp(1.4rem,3vw,2rem); font-weight: 400; color: var(--muted); margin-bottom: 4px; animation: slideUp .8s ease both; }
-.hero-name { font-size: clamp(2.6rem,5.5vw,4rem); font-weight: 800; color: var(--purple-light); line-height: 1.05; margin-bottom: 16px; animation: slideUp .8s .15s ease both; }
-.hero-name .brace { color: var(--purple-light); font-weight: 300; opacity: .7; }
+/* ── Skills ── */
+const skills = [
+  { name:'Python',       color:'#3776ab', bg:'#1e3a5f',
+    logo:<svg viewBox="0 0 24 24"><path fill="#3776ab" d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05L0 11.97l.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09-.33.22zM21.1 6.11l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.02.08.02zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08-.33.23z"/><path fill="#ffd43b" d="M9.38 7.45h5.84v.83H9.38z"/></svg> },
+  { name:'Machine Learning', color:'#a855f7', bg:'#2d1b4e',
+    logo:<svg viewBox="0 0 24 24"><path fill="#a855f7" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V8h2v9zm4 0h-2V8h2v9z"/></svg> },
+  { name:'Power BI',     color:'#f2c811', bg:'#3d2d00',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f2c811" d="M3 13h2v7H3v-7zm4-5h2v12H7V8zm4-3h2v15h-2V5zm4 5h2v10h-2V10zm4-3h2v13h-2V7z"/></svg> },
+  { name:'Java',         color:'#e76f00', bg:'#3d1a1a',
+    logo:<svg viewBox="0 0 24 24"><path fill="#e76f00" d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211 0 0 .552.346 1.321.646-4.699 2.013-10.633-.118-6.943-1.149M8.276 15.933s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308 0 0 .384.389.987.602-5.679 1.661-12.007.13-7.942-1.218M13.116 11.475c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688 0-.001-8.216 2.051-4.292 6.573M19.33 20.504s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033-.856-.373.75-.89 1.254-.998.527-.114.828-.093.828-.093-.953-.671-6.156 1.317-2.643 1.887 9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062 1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.981.623-10.522-.568 2.082-1.006 3.776-.892 3.776-.892M17.116 17.584c4.503-2.34 2.421-4.589.968-4.285-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562 0-.001.07-.062.09-.118"/></svg> },
+  { name:'Git',          color:'#f05032', bg:'#3d1500',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f05032" d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.608-.406-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187"/></svg> },
+  { name:'GitHub',       color:'#e2e8f0', bg:'#1e293b',
+    logo:<svg viewBox="0 0 24 24"><path fill="#e2e8f0" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> },
+  { name:'SQL',          color:'#00aff0', bg:'#0e2d35',
+    logo:<svg viewBox="0 0 24 24"><path fill="#00aff0" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zm0 14c-3.87 0-6-1.5-6-2v-2.23C7.61 15.57 9.72 16 12 16s4.39-.43 6-1.23V17c0 .5-2.13 2-6 2zm0-4c-3.87 0-6-1.5-6-2v-2.23C7.61 11.57 9.72 12 12 12s4.39-.43 6-1.23V13c0 .5-2.13 2-6 2z"/></svg> },
+  { name:'OpenCV',       color:'#4ade80', bg:'#0f2d1e',
+    logo:<svg viewBox="0 0 24 24"><path fill="#4ade80" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg> },
+  { name:'Colab',        color:'#f9ab00', bg:'#3d1e0a',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f9ab00" d="M16.9 8.2L15 6.3l-3 3-3-3-1.9 1.9 3 3-3 3 1.9 1.9 3-3 3 3 1.9-1.9-3-3 3-3zM12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg> },
+  { name:'Jupyter',      color:'#f37626', bg:'#3d2800',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f37626" d="M7.157 22.201A1.784 1.784 0 0 1 5.378 20.7c-.483-2.43 1.938-4.943 5.941-5.03.717-.016 1.406.04 2.049.158-.049-.217-.076-.419-.076-.6 0-.714.344-1.294.806-1.605-4.745.153-9.219 2.388-9.219 5.97 0 1.978 1.51 3.407 3.278 3.407.828 0 1.676-.255 2.399-.74L7.157 22.2zm9.686-2.152c.723.485 1.571.74 2.399.74 1.768 0 3.278-1.429 3.278-3.407 0-3.582-4.474-5.817-9.219-5.97.462.311.806.891.806 1.605 0 .181-.027.383-.076.6.643-.118 1.332-.174 2.049-.158 4.003.087 6.424 2.6 5.941 5.03a1.784 1.784 0 0 1-1.779 1.501 1.784 1.784 0 0 1-1.08-.358l-2.32.417zM12 13.008c1.106 0 2.003-.897 2.003-2.003 0-1.106-.897-2.004-2.003-2.004A2.003 2.003 0 0 0 9.997 11.005c0 1.106.897 2.003 2.003 2.003z"/></svg> },
+  { name:'VS Code',      color:'#007acc', bg:'#0c2340',
+    logo:<svg viewBox="0 0 24 24"><path fill="#007acc" d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 19.88V4.12a1.5 1.5 0 0 0-.85-1.533zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg> },
+  { name:'Scikit-learn', color:'#f7931e', bg:'#3d1e00',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f7931e" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg> },
+  { name:'Flask',        color:'#94a3b8', bg:'#1e293b',
+    logo:<svg viewBox="0 0 24 24"><path fill="#94a3b8" d="M14 2H8v8.5L4.5 17c-.83 1.44-.32 3.27 1.12 4.1.46.27.97.4 1.48.4H17c1.66 0 3-1.34 3-3 0-.51-.13-1.02-.4-1.48L16 10.5V2h-2zm1 8.5l3.4 5.9c.38.66.1 1.5-.56 1.88-.2.11-.42.17-.64.17H7c-.75 0-1.35-.6-1.35-1.35 0-.22.06-.44.17-.64L9 10.5V4h6v6.5z"/></svg> },
+  { name:'Streamlit',    color:'#ff4b4b', bg:'#3d0a0a',
+    logo:<svg viewBox="0 0 24 24"><path fill="#ff4b4b" d="M19.44 9.03L12.29 2l-2.08 2.08 7.15 7.03-7.15 7.04L12.29 20l7.15-7.15a2.813 2.813 0 0 0 0-3.82zM6.29 2L4.56 3.73 11.71 11 4.56 18.27 6.29 20l7.15-7.15a2.813 2.813 0 0 0 0-3.82L6.29 2z"/></svg> },
+  { name:'Pandas',       color:'#a78bfa', bg:'#1a0a3d',
+    logo:<svg viewBox="0 0 24 24"><path fill="#a78bfa" d="M9 3H7v7.5h2V3zM9 13.5H7V21h2v-7.5zM17 3h-2v7.5h2V3zM17 13.5h-2V21h2v-7.5zM13 8.5h-2v7h2v-7z"/></svg> },
+  { name:'NumPy',        color:'#4dabcf', bg:'#0e2d35',
+    logo:<svg viewBox="0 0 24 24"><path fill="#4dabcf" d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5 12 13 4 8.5l8-4.32zM4 10.18l7 3.5V20l-7-3.5v-6.32zm9 3.5l7-3.5v6.32l-7 3.5v-6.32z"/></svg> },
+]
 
-.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; animation: slideUp .8s .25s ease both; }
-.hero-tag {
-  padding: 4px 12px; border-radius: 20px; font-size: .8rem; font-weight: 600;
-  border: 1px solid rgba(92,225,230,.3);
-  background: rgba(92,225,230,.07); color: var(--teal);
-}
+/* ── Neural network nodes ── */
+const nodes = [
+  { id:0,  x:400, y:220, label:'Python',    color:'#3776ab', bg:'#1e3a5f', r:52, main:true, dur:'7s', delay:'0s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#3776ab" d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05L0 11.97l.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09-.33.22zM21.1 6.11l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.02.08.02zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08-.33.23z"/><path fill="#ffd43b" d="M9.38 7.45h5.84v.83H9.38z"/></svg> },
+  { id:1,  x:145, y:95,  label:'ML',        color:'#a855f7', bg:'#2d1b4e', r:32, dur:'5.5s',delay:'0.4s',
+    logo:<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="#a855f7"/><path fill="none" stroke="#a855f7" strokeWidth="1.5" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path fill="#a855f7" d="M12 6l1.5 4H10.5L12 6zm0 12l-1.5-4h3L12 18zM6 12l4-1.5V13.5L6 12zm12 0l-4 1.5V10.5L18 12z"/></svg> },
+  { id:2,  x:655, y:95,  label:'Power BI',  color:'#f2c811', bg:'#3d2d00', r:32, dur:'6s',  delay:'0.8s',
+    logo:<svg viewBox="0 0 24 24"><rect x="3" y="13" width="3" height="8" fill="#f2c811" rx="1"/><rect x="7" y="8" width="3" height="13" fill="#f2c811" rx="1"/><rect x="11" y="5" width="3" height="16" fill="#f2c811" rx="1"/><rect x="15" y="10" width="3" height="11" fill="#f2c811" rx="1"/><rect x="19" y="7" width="2" height="14" fill="#f2c811" rx="1"/></svg> },
+  { id:3,  x:60,  y:235, label:'Java',      color:'#e76f00', bg:'#3d1a1a', r:30, dur:'8s',  delay:'1.2s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#e76f00" d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211 0 0 .552.346 1.321.646-4.699 2.013-10.633-.118-6.943-1.149M8.276 15.933s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308 0 0 .384.389.987.602-5.679 1.661-12.007.13-7.942-1.218M13.116 11.475c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688 0-.001-8.216 2.051-4.292 6.573M19.33 20.504s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033-.856-.373.75-.89 1.254-.998.527-.114.828-.093.828-.093-.953-.671-6.156 1.317-2.643 1.887 9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062 1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.981.623-10.522-.568 2.082-1.006 3.776-.892 3.776-.892M17.116 17.584c4.503-2.34 2.421-4.589.968-4.285-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562 0-.001.07-.062.09-.118"/></svg> },
+  { id:4,  x:740, y:235, label:'Git',       color:'#f05032', bg:'#3d1500', r:30, dur:'6.5s',delay:'0.2s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f05032" d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.608-.406-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187"/></svg> },
+  { id:5,  x:100, y:375, label:'GitHub',    color:'#e2e8f0', bg:'#1e293b', r:30, dur:'7.5s',delay:'1.6s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#e2e8f0" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> },
+  { id:6,  x:700, y:375, label:'SQL',       color:'#00aff0', bg:'#0e2d35', r:30, dur:'5s',  delay:'0.6s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#00aff0" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zm0 14c-3.87 0-6-1.5-6-2v-2.23C7.61 15.57 9.72 16 12 16s4.39-.43 6-1.23V17c0 .5-2.13 2-6 2zm0-4c-3.87 0-6-1.5-6-2v-2.23C7.61 11.57 9.72 12 12 12s4.39-.43 6-1.23V13c0 .5-2.13 2-6 2z"/></svg> },
+  { id:7,  x:245, y:385, label:'OpenCV',    color:'#4ade80', bg:'#0f2d1e', r:28, dur:'9s',  delay:'1s',
+    logo:<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="#4ade80" strokeWidth="2"/><circle cx="16" cy="8" r="4" fill="none" stroke="#22c55e" strokeWidth="2"/><circle cx="12" cy="15" r="4" fill="none" stroke="#86efac" strokeWidth="2"/><circle cx="8" cy="8" r="1.5" fill="#4ade80"/><circle cx="16" cy="8" r="1.5" fill="#22c55e"/><circle cx="12" cy="15" r="1.5" fill="#86efac"/></svg> },
+  { id:8,  x:555, y:385, label:'Colab',     color:'#f9ab00', bg:'#3d1e0a', r:28, dur:'6s',  delay:'1.4s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f9ab00" d="M4.5 12a7.5 7.5 0 0115 0 7.5 7.5 0 01-15 0z" opacity=".3"/><path fill="#f9ab00" d="M12 4.5C7.86 4.5 4.5 7.86 4.5 12S7.86 19.5 12 19.5 19.5 16.14 19.5 12 16.14 4.5 12 4.5zm-1 9.5V10l4 3-4 3z"/></svg> },
+  { id:9,  x:265, y:72,  label:'Jupyter',   color:'#f37626', bg:'#3d2800', r:28, dur:'7s',  delay:'0.5s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f37626" d="M7.157 22.201A1.784 1.784 0 0 1 5.378 20.7c-.483-2.43 1.938-4.943 5.941-5.03.717-.016 1.406.04 2.049.158-.049-.217-.076-.419-.076-.6 0-.714.344-1.294.806-1.605-4.745.153-9.219 2.388-9.219 5.97 0 1.978 1.51 3.407 3.278 3.407.828 0 1.676-.255 2.399-.74L7.157 22.2zm9.686-2.152c.723.485 1.571.74 2.399.74 1.768 0 3.278-1.429 3.278-3.407 0-3.582-4.474-5.817-9.219-5.97.462.311.806.891.806 1.605 0 .181-.027.383-.076.6.643-.118 1.332-.174 2.049-.158 4.003.087 6.424 2.6 5.941 5.03a1.784 1.784 0 0 1-1.779 1.501 1.784 1.784 0 0 1-1.08-.358l-2.32.417zM12 13.008c1.106 0 2.003-.897 2.003-2.003 0-1.106-.897-2.004-2.003-2.004A2.003 2.003 0 0 0 9.997 11.005c0 1.106.897 2.003 2.003 2.003z"/></svg> },
+  { id:10, x:535, y:72,  label:'VS Code',   color:'#007acc', bg:'#0c2340', r:28, dur:'8.5s',delay:'1.8s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#007acc" d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 19.88V4.12a1.5 1.5 0 0 0-.85-1.533zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg> },
+  { id:11, x:400, y:385, label:'Scikit',    color:'#f7931e', bg:'#3d1e00', r:28, dur:'5.5s',delay:'0.9s',
+    logo:<svg viewBox="0 0 24 24"><path fill="#f7931e" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg> },
+]
+const edges = [
+  [0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9],[0,10],[0,11],
+  [1,3],[1,9],[2,4],[2,10],[3,5],[4,6],[5,7],[6,8],[7,11],[8,11],[9,10],
+]
 
-/* ── Hero Roles animated ── */
-.hero-roles-wrap {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 20px;
-  animation: slideUp .8s .25s ease both;
-  font-size: 1rem; font-weight: 600;
-}
-.hero-roles-prefix { color: var(--muted); }
-.hero-role-animated {
-  padding: 5px 16px; border-radius: 20px; font-size: 1rem; font-weight: 700;
-  border: 1px solid rgba(92,225,230,.5);
-  background: rgba(92,225,230,.08); color: var(--teal);
-  display: inline-block;
-  transition: opacity .4s cubic-bezier(.4,0,.2,1), transform .4s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 18px rgba(92,225,230,.12);
-  letter-spacing: .02em;
-}
-.role-in  { opacity: 1; transform: translateY(0) scale(1); }
-.role-out { opacity: 0; transform: translateY(-14px) scale(0.95); }
+/* ── Projects ── */
+const projects = [
+  { name:'Fake News Detection',            stack:['Python','NLP','TF-IDF','Streamlit'],         desc:'Trained Logistic Regression on 44,898 articles achieving 96.81% accuracy. Deployed as a live Streamlit web app.', url:'https://github.com/luckylucky110507/fake-news-detection',                       color:'#3b82f6', icon:'📰' },
+  { name:'Movie Success Prediction',       stack:['Python','Scikit-learn','SVM'],               desc:'Compared LR, SVM, and Naive Bayes to predict movie box-office success.',                                          url:'https://github.com/luckylucky110507/Movie-Success-Prediction',                 color:'#a855f7', icon:'🎬' },
+  { name:'Movie Recommendation System',    stack:['Python','TF-IDF','Cosine Similarity'],       desc:'Content-based filtering engine across 1,300+ movies. Netflix-style Streamlit app.',                              url:'https://github.com/luckylucky110507/Movie-Recommendation-System',              color:'#ef4444', icon:'🎥' },
+  { name:'OMR Evaluation & Scoring',       stack:['Python','OpenCV','Streamlit'],               desc:'Automated answer-sheet grading using Optical Mark Recognition.',                                                  url:'https://github.com/luckylucky110507/OMR-Evaluation-and-Scoring-system',       color:'#22c55e', icon:'📊' },
+  { name:'Voice SQL Insight Agent',        stack:['Python','Flask','NLP','Speech Recognition'], desc:'Flask voice analytics agent that converts spoken questions into schema-validated SQL.',                           url:'https://github.com/luckylucky110507/voice-sql-insight-agent',                 color:'#f59e0b', icon:'🎙️' },
+  { name:'Real-Time Collaborative Editor', stack:['WebSocket','JavaScript','Node.js'],          desc:'Multi-user document editor with conflict-resolution logic enabling simultaneous edits.',                          url:'https://github.com/luckylucky110507/Real-Time-Collaborative-Document-Editor', color:'#06b6d4', icon:'📝' },
+  { name:'Weather API Integration',        stack:['REST API','JavaScript','HTML','CSS'],         desc:'Live weather data display with a third-party REST API and responsive UI.',                                       url:'https://github.com/luckylucky110507/Weather-API-Integration',                 color:'#8b5cf6', icon:'🌤️' },
+]
 
-/* ── Floating background role words ── */
-.hero-float-bg {
-  position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
-}
-.hero-float-word {
-  position: absolute;
-  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  user-select: none;
-  opacity: 0;
-  animation: bgWordFloat 6s ease-in-out infinite;
-  animation-delay: calc(var(--fi, 0) * 1.5s);
-}
-.hero-float-word:nth-child(1) {
-  top: 10%; left: 4%;
-  color: rgba(92,225,230,0.13);
-  text-shadow: 0 0 30px rgba(92,225,230,0.15);
-}
-.hero-float-word:nth-child(2) {
-  top: 52%; right: 3%;
-  color: rgba(168,85,247,0.12);
-  text-shadow: 0 0 30px rgba(168,85,247,0.15);
-}
-.hero-float-word:nth-child(3) {
-  top: 75%; left: 6%;
-  color: rgba(92,225,230,0.10);
-  text-shadow: 0 0 30px rgba(92,225,230,0.12);
-}
-.hero-float-word:nth-child(4) {
-  top: 28%; right: 8%;
-  color: rgba(168,85,247,0.10);
-  text-shadow: 0 0 30px rgba(168,85,247,0.12);
-}
-@keyframes bgWordFloat {
-  0%   { opacity: 0;    transform: translateY(12px) rotate(-2deg); }
-  15%  { opacity: 1;    transform: translateY(0px)  rotate(-2deg); }
-  75%  { opacity: 0.85; transform: translateY(-18px) rotate(1deg); }
-  100% { opacity: 0;    transform: translateY(-28px) rotate(1deg); }
-}
+/* ── Certifications ── */
+const certifications = [
+  { title:'Introduction to AI Concepts',            issuer:'Microsoft',               date:'Sep 11, 2025',    image:'/certifications/microsoft-intro-ai.jpg' },
+  { title:'AI Tools Workshop',                      issuer:'be10x',                   date:'Dec 14, 2025',    image:'/certifications/be10x-ai-tools.jpg' },
+  { title:"Code4EdTech Hack-A-Thon'25",             issuer:'Innomatics Research Labs', date:'Sep 21-22, 2025', image:'/certifications/innomatics-hackathon.jpg' },
+  { title:'Oracle Certified Foundations Associate', issuer:'Oracle University',        date:'Aug 27, 2025',    image:'/certifications/oracle-ai-foundations.jpg' },
+  { title:'Master ChatGPT',                         issuer:'UniAthena',               date:'Jul 13, 2025',    image:'/certifications/master-chatgpt.jpg' },
+  { title:'Google AI Professional Certificate',     issuer:'Google / Coursera',        date:'May 3, 2026',     image:'/certifications/google-ai-professional.png' },
+  { title:'Soft Computing Techniques (Elite)',      issuer:'NPTEL - IIT Dhanbad',      date:'Jan-Apr 2026',    note:'71%', image:'/certifications/nptel-soft-computing.png' },
+  { title:'Develop Generative AI Applications: Get Started', issuer:'IBM / Coursera', date:'Apr 25, 2026', image:'/certifications/ibm-gen-ai.png' },
+  { title:'Cybersecurity Analyst Simulation',       issuer:'Tata - Forage',            date:'Jul 3, 2025',     image:'/certifications/tata-forage-cybersecurity.jpg' },
+  { title:'Technology Job Simulation',              issuer:'Deloitte',                 date:'Jul 3, 2025',     image:'/certifications/deloitte-tech-sim.jpg' },
+  { title:'Programming in Java (Elite)',             issuer:'NPTEL - IIT Kharagpur',   date:'Jul-Oct 2025',    note:'82%', image:'/certifications/nptel-java-elite.jpg' },
+  { title:'Machine Learning using Python',          issuer:'Infosys Springboard',      date:'Oct 29, 2025',    image:'/certifications/infosys-ml-python.jpg' },
+  { title:'C# Data Structures and Algorithms',      issuer:'Infosys Springboard',      date:'Oct 29, 2025',    image:'/certifications/infosys-csharp-dsa.jpg' },
+]
 
-.hero-desc { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 28px; max-width: 460px; animation: slideUp .8s .35s ease both; }
-.hero-btns { display: flex; gap: 14px; margin-bottom: 24px; animation: slideUp .8s .45s ease both; }
+/* ── Experience ── */
+const experience = [
+  { title:'Full Stack Development Intern', company:'CodTech IT Solutions, Remote', period:'Aug 2025 – Oct 2025',
+    points:['Developed real-time chat app using WebSocket, supporting 50+ concurrent users.','Built collaborative multi-user document editor with conflict-resolution logic.','Integrated weather REST API and launched a Chrome productivity-tracker extension.'] },
+  { title:'Artificial Intelligence Intern', company:'Codsoft, Remote', period:'Jul 2025 – Aug 2025',
+    points:['Designed rule-based NLP chatbot covering 20+ predefined intent categories.','Developed AI-powered Tic-Tac-Toe using Minimax algorithm.','Built content-based recommendation system using cosine similarity scoring.'] },
+]
 
-.hero-socials { display: flex; gap: 10px; animation: slideUp .8s .55s ease both; }
-.hs-link {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: rgba(255,255,255,.06); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; color: var(--muted);
-  transition: color .2s, border-color .2s, transform .2s, box-shadow .2s;
-}
-.hs-link:hover { color: var(--teal); border-color: rgba(92,225,230,.4); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(92,225,230,.2); }
-
-/* 3-D floating photo */
-.hero-photo-wrap {
-  position: absolute; right: 70px; top: 50%; transform: translateY(-50%);
-  z-index: 1; width: 360px; height: 440px;
-  animation: heroFloat3d 7s ease-in-out infinite;
-}
-.hero-photo-glow {
-  position: absolute; inset: -20px;
-  border-radius: 50% 50% 50% 50%/40% 40% 60% 60%;
-  background: radial-gradient(ellipse, rgba(124,58,237,.5) 0%, transparent 70%);
-  animation: pulseGlow 3.5s ease-in-out infinite, blobMorph 9s ease-in-out infinite;
-  z-index: 0;
-}
-.hero-photo {
-  position: relative; z-index: 1;
-  width: 100%; height: 100%; object-fit: cover; object-position: top center;
-  border-radius: 50% 50% 50% 50%/40% 40% 60% 60%;
-  animation: blobMorph 9s ease-in-out infinite;
-}
-@keyframes heroFloat3d {
-  0%,100% { transform: translateY(-50%) translateY(0) rotateY(-5deg) rotateX(2deg); }
-  33%     { transform: translateY(-50%) translateY(-20px) rotateY(4deg) rotateX(-2deg); }
-  66%     { transform: translateY(-50%) translateY(-10px) rotateY(-2deg) rotateX(4deg); }
-}
-
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
-.btn-outline {
-  padding: 12px 28px; border-radius: 10px; border: 2px solid #2563eb;
-  color: var(--text); font-size: .95rem; font-weight: 600; background: transparent;
-  transition: background .2s, transform .3s, box-shadow .3s;
-}
-.btn-outline:hover { background: rgba(37,99,235,.15); transform: translateY(-5px) scale(1.04); box-shadow: 0 0 30px rgba(37,99,235,.45); }
-.btn-filled {
-  padding: 12px 28px; border-radius: 10px; background: #2563eb; color: #fff;
-  font-size: .95rem; font-weight: 600;
-  transition: opacity .2s, transform .3s, box-shadow .3s;
-}
-.btn-filled:hover { opacity: .88; transform: translateY(-5px) scale(1.04); box-shadow: 0 0 36px rgba(37,99,235,.6); }
-
-/* ═══════════════════════════════════════
-   SECTIONS
-═══════════════════════════════════════ */
-.section { padding: 80px 60px; max-width: 1100px; margin: 0 auto; }
-.section-label { font-size: .85rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
-.section-heading { font-size: clamp(1.7rem,3vw,2.4rem); font-weight: 700; color: var(--text); margin-bottom: 10px; }
-.section-sub { color: var(--muted); font-size: .95rem; margin-bottom: 40px; max-width: 560px; }
-
-/* ═══════════════════════════════════════
-   BIO STRIP
-═══════════════════════════════════════ */
-.bio-strip {
-  background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(92,225,230,.06));
-  border-top: 1px solid rgba(124,58,237,.2);
-  border-bottom: 1px solid rgba(92,225,230,.15);
-  padding: 28px 60px;
-}
-.bio-strip-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
-.bio-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 40px; }
-.bio-num { font-size: 2rem; font-weight: 800; color: var(--teal); line-height: 1; }
-.bio-label { font-size: .8rem; color: var(--muted); font-weight: 500; }
-.bio-div { width: 1px; height: 40px; background: rgba(255,255,255,.1); }
-
-/* ═══════════════════════════════════════
-   ABOUT
-═══════════════════════════════════════ */
-.about-row { display: flex; align-items: flex-start; gap: 48px; margin-top: 32px; }
-.about-left-wrap { flex: 1.2; }
-.about-right-wrap { flex: 1; }
-
-.about-terminal {
-  background: #0a0f1e; border-radius: 14px; border: 1px solid var(--border);
-  overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(92,225,230,.06);
-  animation: float-terminal 8s ease-in-out infinite;
-}
-.about-terminal:hover { box-shadow: 0 50px 120px rgba(0,0,0,.65), 0 0 60px rgba(92,225,230,.16); }
-@keyframes float-terminal {
-  0%,100%{ transform: translateY(0) rotateX(1.5deg) rotateY(-2deg); }
-  40%    { transform: translateY(-14px) rotateX(-1deg) rotateY(2.5deg); }
-  70%    { transform: translateY(-6px) rotateX(2deg) rotateY(-1deg); }
-}
-.terminal-bar { background: #131c30; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
-.terminal-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot.red{background:#ef4444}.dot.yellow{background:#f59e0b}.dot.green{background:#22c55e}
-.terminal-title { font-size: .78rem; color: var(--muted); margin-left: 8px; font-family: monospace; }
-.terminal-body { padding: 24px; }
-.terminal-prompt { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: .9rem; }
-.terminal-prompt .star { color: var(--teal); }
-.terminal-prompt .cmd { color: var(--teal); font-family: monospace; font-weight: 600; }
-.terminal-text { color: var(--muted); font-size: .92rem; line-height: 1.8; }
-.terminal-cursor { width: 8px; height: 16px; background: var(--teal); margin-top: 12px; animation: cursorBlink 1.2s step-end infinite; }
-@keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-.about-cards { display: flex; flex-direction: column; gap: 14px; }
-.about-card {
-  display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
-  transition: transform .35s, border-color .3s, box-shadow .35s;
-  animation: float var(--acd,7s) ease-in-out var(--acde,0s) infinite;
-}
-.about-card:nth-child(1){--acd:6s;--acde:0s}
-.about-card:nth-child(2){--acd:7.5s;--acde:.6s}
-.about-card:nth-child(3){--acd:5.5s;--acde:1.2s}
-.about-card:nth-child(4){--acd:8s;--acde:1.8s}
-.about-card:hover { transform: translateY(-8px) rotateX(3deg) scale(1.02); border-color: rgba(92,225,230,.35); box-shadow: 0 24px 56px rgba(0,0,0,.5), 0 0 30px rgba(92,225,230,.12); }
-.about-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
-.about-card-title { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
-.about-card-val { font-size: .9rem; color: var(--text); font-weight: 500; }
-.about-tag { display: inline-block; margin-top: 20px; padding: 6px 14px; background: rgba(92,225,230,.08); border: 1px solid rgba(92,225,230,.2); border-radius: 20px; font-size: .85rem; color: var(--teal); }
-
-/* ═══════════════════════════════════════
-   SKILLS — neural network (floaty 3-D)
-═══════════════════════════════════════ */
-.skills-section { background: var(--bg2); padding: 80px 0; }
-.skills-inner { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
-.skills-circuit { display: flex; align-items: center; justify-content: center; margin-top: 36px; }
-.circuit-svg {
-  width: 100%; max-width: 800px; height: 460px;
-  filter: drop-shadow(0 0 30px rgba(124,58,237,.2));
-  animation: float 10s ease-in-out infinite;
+/* ── Chatbot QA ── */
+const BOT_QA = [
+  { q:/hi|hello|hey/i,              a:"Hi there! 👋 I'm Lucky's AI. Ask me about her skills, projects, or how to reach her!" },
+  { q:/skill|tech|stack|know/i,     a:"Lucky is skilled in Python, ML, NLP, SQL, Power BI, Java, Scikit-learn, OpenCV, Flask, Streamlit, Pandas, NumPy, Git & Jupyter! 🚀" },
+  { q:/project/i,                   a:"Lucky has 7+ projects — Fake News Detector (96.81% accuracy), Movie Recommender, Voice SQL Agent, OMR Grader & more! 🎯" },
+  { q:/edu|college|univer|study/i,  a:"B.Tech CSE at IIMT University, Greater Noida (2023–2027) · SGPA: 8.46/10 🎓" },
+  { q:/intern|work|experience/i,    a:"Lucky interned at CodTech IT Solutions (Full Stack, Aug–Oct 2025) & Codsoft (AI, Jul–Aug 2025) 💼" },
+  { q:/cert/i,                      a:"12+ certs from Microsoft, Oracle, Google, IBM, NPTEL, Infosys Springboard! 📜" },
+  { q:/research|paper/i,            a:"Co-authored an LSTM paper on Assamese offensive comment detection — IRJCS Vol.12, Dec 2025 📄" },
+  { q:/contact|email|phone/i,       a:"📧 kumarilucky01437@gmail.com\n📞 +91-7827843321\n📍 Delhi/NCR, India" },
+  { q:/github/i,                    a:"GitHub → github.com/luckylucky110507 🐙" },
+  { q:/linkedin/i,                  a:"LinkedIn → linkedin.com/in/lucky-kumari-3b83a2364 🔗" },
+  { q:/instagram/i,                 a:"Instagram → @k11_lucky 📸" },
+  { q:/resume|cv/i,                 a:"Hit ⬇ Resume in the navbar to download Lucky's CV! 📄" },
+  { q:/sgpa|gpa|grade/i,            a:"SGPA 8.46/10 at IIMT University 🏆" },
+  { q:/python|hackerrank/i,         a:"Lucky holds a Golden Badge in Python on HackerRank 🐍" },
+]
+function getBotReply(msg) {
+  const m = BOT_QA.find(({ q }) => q.test(msg))
+  return m ? m.a : "Not sure! Try asking about Lucky's skills, projects, education, certs, or contact info 😊"
 }
 
-/* Skill Badges */
-.skill-badges-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px,1fr));
-  gap: 16px; margin-top: 40px;
-}
-.skill-badge {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding: 18px 10px; border-radius: 16px;
-  background: var(--sb, rgba(255,255,255,.04));
-  border: 1px solid color-mix(in srgb, var(--sc,#5ce1e6) 30%, transparent);
-  transform-style: preserve-3d;
-  transition: transform .45s cubic-bezier(.175,.885,.32,1.275), box-shadow .45s, border-color .3s;
-  box-shadow: 0 12px 36px rgba(0,0,0,.35);
-  cursor: default;
-}
-.skill-badge:hover {
-  transform: translateY(-16px) rotateX(10deg) rotateY(-7deg) scale(1.1);
-  box-shadow: 0 36px 80px rgba(0,0,0,.6), 0 0 36px color-mix(in srgb, var(--sc,#5ce1e6) 50%, transparent);
-  border-color: var(--sc,#5ce1e6);
-}
-.skill-badge-logo { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: rgba(0,0,0,.3); padding: 6px; }
-.skill-badge-logo svg { width: 100%; height: 100%; }
-.skill-badge-name { font-size: .76rem; font-weight: 700; color: var(--sc,var(--text)); text-align: center; line-height: 1.3; }
-
-/* ═══════════════════════════════════════
-   PROJECTS – 3-D floating cards
-═══════════════════════════════════════ */
-.project-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 28px; }
-.project-card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; overflow: hidden;
-  transform-style: preserve-3d;
-  transition: transform .5s cubic-bezier(.175,.885,.32,1.275), box-shadow .5s, border-color .3s;
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
-}
-.project-card:hover {
-  transform: translateY(-20px) rotateX(6deg) rotateY(-4deg) scale(1.04);
-  box-shadow: 0 56px 110px rgba(0,0,0,.65), 0 0 60px rgba(124,58,237,.3);
-  border-color: rgba(124,58,237,.55);
-}
-.project-thumb { height: 160px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.project-thumb::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(59,130,246,.12)); }
-.thumb-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 26px; background: rgba(0,0,0,.5); display: flex; align-items: center; gap: 6px; padding: 0 10px; z-index: 1; }
-.thumb-bar span { width: 8px; height: 8px; border-radius: 50%; }
-.project-emoji { position: relative; z-index: 1; font-size: 3rem; }
-.project-info { padding: 18px; }
-.project-info h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-.project-info p { font-size: .88rem; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
-.project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.project-tag { padding: 3px 10px; border-radius: 4px; border: 1px solid var(--border); font-size: .76rem; color: var(--muted); }
-.project-links { display: flex; gap: 12px; }
-.project-links a { font-size: .85rem; color: #3b82f6; font-weight: 600; transition: color .2s, transform .2s; }
-.project-links a:hover { color: var(--teal); transform: translateY(-2px); }
-
-/* ═══════════════════════════════════════
-   CERTIFICATES — neural wire edition
-═══════════════════════════════════════ */
-.cert-section {
-  background: var(--bg2); padding: 90px 0;
-  position: relative; overflow: hidden;
-}
-.cert-wire-bg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 0;
-}
-.cert-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; position: relative; z-index: 1; }
-
-/* Grid layout instead of horizontal scroll */
-.cert-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 26px;
-  margin-top: 12px;
+/* ── Neural network SVG ── */
+function NeuralSkills() {
+  return (
+    <svg className="circuit-svg" viewBox="0 0 800 460" fill="none">
+      <defs>
+        <filter id="gn"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="ge"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        {nodes.map(n=>(
+          <radialGradient key={n.id} id={`ng${n.id}`} cx="50%" cy="35%" r="60%">
+            <stop offset="0%" stopColor={n.color} stopOpacity="0.25"/>
+            <stop offset="100%" stopColor={n.bg} stopOpacity="1"/>
+          </radialGradient>
+        ))}
+      </defs>
+      {/* Edges */}
+      {edges.map(([a,b],i)=>{
+        const na=nodes[a], nb=nodes[b]
+        return (
+          <g key={i} filter="url(#ge)">
+            <line x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
+              stroke={`${na.color}30`} strokeWidth="1.5"
+              strokeDasharray="6 4">
+              <animate attributeName="stroke-dashoffset" from="0" to="-20" dur={`${2+i*0.3}s`} repeatCount="indefinite"/>
+            </line>
+            <line x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
+              stroke={`${na.color}15`} strokeWidth="3"
+              strokeDasharray="none"/>
+          </g>
+        )
+      })}
+      {/* Nodes */}
+      {nodes.map(n=>(
+        <g key={n.id} filter="url(#gn)">
+          <animateTransform
+            attributeName="transform" type="translate"
+            values={`0,0; 0,-${n.main?12:7}; 0,0`}
+            dur={n.dur} begin={n.delay} repeatCount="indefinite"
+            additive="sum"/>
+          {n.main && (
+            <>
+              <circle cx={n.x} cy={n.y} r={n.r+22} fill="none" stroke={n.color} strokeWidth="1" opacity="0.12">
+                <animate attributeName="r" values={`${n.r+22};${n.r+30};${n.r+22}`} dur="4s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.12;0.05;0.12" dur="4s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx={n.x} cy={n.y} r={n.r+10} fill="none" stroke={n.color} strokeWidth="1" opacity="0.22">
+                <animate attributeName="r" values={`${n.r+10};${n.r+15};${n.r+10}`} dur="3s" repeatCount="indefinite"/>
+              </circle>
+            </>
+          )}
+          <circle cx={n.x} cy={n.y} r={n.r} fill={`url(#ng${n.id})`} stroke={n.color} strokeWidth={n.main?2.5:1.5} opacity="0.97"/>
+          {/* Inline SVG logo centered on node */}
+          {React.cloneElement(n.logo, {
+            x: n.x-(n.main?20:13),
+            y: n.y-(n.main?22:15),
+            width: n.main?40:26,
+            height: n.main?40:26,
+          })}
+          <text x={n.x} y={n.y+(n.main?22:17)} textAnchor="middle" fill={n.color} fontSize={n.main?10:8} fontWeight="700" opacity="0.9">{n.label}</text>
+        </g>
+      ))}
+    </svg>
+  )
 }
 
-.cert-card {
-  position: relative; overflow: hidden;
-  background: linear-gradient(145deg, rgba(13,17,32,.95), rgba(8,12,20,.98));
-  border: 1px solid rgba(92,225,230,.18);
-  border-radius: 18px;
-  transform-style: preserve-3d;
-  animation: certFloat calc(6s + var(--ci,0) * 0.4s) ease-in-out calc(var(--ci,0) * 0.25s) infinite;
-  transition: transform .55s cubic-bezier(.175,.885,.32,1.275), box-shadow .55s, border-color .3s;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.55),
-    0 0 0 1px rgba(92,225,230,.06),
-    inset 0 1px 0 rgba(255,255,255,.04);
-}
-.cert-card:hover {
-  transform: translateY(-26px) rotateX(8deg) rotateY(-6deg) scale(1.06) !important;
-  animation-play-state: paused;
-  box-shadow:
-    0 60px 120px rgba(0,0,0,.7),
-    0 0 80px rgba(92,225,230,.3),
-    0 0 40px rgba(124,58,237,.2),
-    inset 0 1px 0 rgba(255,255,255,.08);
-  border-color: rgba(92,225,230,.65);
-}
-@keyframes certFloat {
-  0%,100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
-  33%     { transform: translateY(-10px) rotateX(2deg) rotateY(-2deg); }
-  66%     { transform: translateY(-5px) rotateX(-1.5deg) rotateY(2deg); }
+/* ── Floating particles ── */
+function Particles() {
+  const pts = [
+    {s:6,t:'18%',l:'10%',d:'5s',dl:'0s'},{s:4,t:'60%',l:'6%',d:'7s',dl:'1s'},
+    {s:8,t:'30%',l:'87%',d:'6s',dl:'2s'},{s:5,t:'72%',l:'82%',d:'8s',dl:'0.5s'},
+    {s:3,t:'48%',l:'48%',d:'4.5s',dl:'1.5s'},{s:7,t:'12%',l:'58%',d:'6.5s',dl:'3s'},
+    {s:4,t:'82%',l:'38%',d:'9s',dl:'2.5s'},{s:5,t:'25%',l:'70%',d:'7s',dl:'0.8s'},
+    {s:3,t:'55%',l:'22%',d:'5.5s',dl:'1.2s'},
+  ]
+  return <>{pts.map((p,i)=>(
+    <div key={i} className="hero-particle"
+      style={{width:p.s,height:p.s,top:p.t,left:p.l,'--dur':p.d,'--delay':p.dl}}/>
+  ))}</>
 }
 
-/* Corner nodes (wire intersection aesthetic) */
-.cc-node {
-  position: absolute; width: 8px; height: 8px; border-radius: 50%; z-index: 3; pointer-events: none;
-  animation: ccNodePulse 3s ease-in-out infinite;
+/* ── DNA Helix ── */
+function DnaHelix() {
+  return (
+    <div className="dna-wrap">
+      <svg className="dna-svg" viewBox="0 0 1800 200" preserveAspectRatio="none">
+        <defs>
+          <filter id="dg"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="dg1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.9"/>
+            <stop offset="25%" stopColor="#5ce1e6" stopOpacity="1"/>
+            <stop offset="50%" stopColor="#7c3aed" stopOpacity="0.9"/>
+            <stop offset="75%" stopColor="#5ce1e6" stopOpacity="1"/>
+            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="dg2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#5ce1e6" stopOpacity="0.9"/>
+            <stop offset="25%" stopColor="#a855f7" stopOpacity="1"/>
+            <stop offset="50%" stopColor="#5ce1e6" stopOpacity="0.9"/>
+            <stop offset="75%" stopColor="#a855f7" stopOpacity="1"/>
+            <stop offset="100%" stopColor="#5ce1e6" stopOpacity="0.9"/>
+          </linearGradient>
+        </defs>
+        <path d={`M 0 100 L 0 100.00 L 5 103.35 L 10 106.68 L 15 109.98 L 20 113.23 L 25 116.42 L 30 119.52 L 35 122.53 L 40 125.44 L 45 128.21 L 50 130.85 L 55 133.34 L 60 135.67 L 65 137.82 L 70 139.79 L 75 141.57 L 80 143.14 L 85 144.50 L 90 145.65 L 95 146.57 L 100 147.27 L 105 147.74 L 110 147.97 L 115 147.97 L 120 147.74 L 125 147.27 L 130 146.57 L 135 145.65 L 140 144.50 L 145 143.14 L 150 141.57 L 155 139.79 L 160 137.82 L 165 135.67 L 170 133.34 L 175 130.85 L 180 128.21 L 185 125.44 L 190 122.53 L 195 119.52 L 200 116.42 L 205 113.23 L 210 109.98 L 215 106.68 L 220 103.35 L 225 100.00 L 230 96.65 L 235 93.32 L 240 90.02 L 245 86.77 L 250 83.58 L 255 80.48 L 260 77.47 L 265 74.56 L 270 71.79 L 275 69.15 L 280 66.66 L 285 64.33 L 290 62.18 L 295 60.21 L 300 58.43 L 305 56.86 L 310 55.50 L 315 54.35 L 320 53.43 L 325 52.73 L 330 52.26 L 335 52.03 L 340 52.03 L 345 52.26 L 350 52.73 L 355 53.43 L 360 54.35 L 365 55.50 L 370 56.86 L 375 58.43 L 380 60.21 L 385 62.18 L 390 64.33 L 395 66.66 L 400 69.15 L 405 71.79 L 410 74.56 L 415 77.47 L 420 80.48 L 425 83.58 L 430 86.77 L 435 90.02 L 440 93.32 L 445 96.65 L 450 100.00 L 455 103.35 L 460 106.68 L 465 109.98 L 470 113.23 L 475 116.42 L 480 119.52 L 485 122.53 L 490 125.44 L 495 128.21 L 500 130.85 L 505 133.34 L 510 135.67 L 515 137.82 L 520 139.79 L 525 141.57 L 530 143.14 L 535 144.50 L 540 145.65 L 545 146.57 L 550 147.27 L 555 147.74 L 560 147.97 L 565 147.97 L 570 147.74 L 575 147.27 L 580 146.57 L 585 145.65 L 590 144.50 L 595 143.14 L 600 141.57 L 605 139.79 L 610 137.82 L 615 135.67 L 620 133.34 L 625 130.85 L 630 128.21 L 635 125.44 L 640 122.53 L 645 119.52 L 650 116.42 L 655 113.23 L 660 109.98 L 665 106.68 L 670 103.35 L 675 100.00 L 680 96.65 L 685 93.32 L 690 90.02 L 695 86.77 L 700 83.58 L 705 80.48 L 710 77.47 L 715 74.56 L 720 71.79 L 725 69.15 L 730 66.66 L 735 64.33 L 740 62.18 L 745 60.21 L 750 58.43 L 755 56.86 L 760 55.50 L 765 54.35 L 770 53.43 L 775 52.73 L 780 52.26 L 785 52.03 L 790 52.03 L 795 52.26 L 800 52.73 L 805 53.43 L 810 54.35 L 815 55.50 L 820 56.86 L 825 58.43 L 830 60.21 L 835 62.18 L 840 64.33 L 845 66.66 L 850 69.15 L 855 71.79 L 860 74.56 L 865 77.47 L 870 80.48 L 875 83.58 L 880 86.77 L 885 90.02 L 890 93.32 L 895 96.65 L 900 100.00 L 905 103.35 L 910 106.68 L 915 109.98 L 920 113.23 L 925 116.42 L 930 119.52 L 935 122.53 L 940 125.44 L 945 128.21 L 950 130.85 L 955 133.34 L 960 135.67 L 965 137.82 L 970 139.79 L 975 141.57 L 980 143.14 L 985 144.50 L 990 145.65 L 995 146.57 L 1000 147.27 L 1005 147.74 L 1010 147.97 L 1015 147.97 L 1020 147.74 L 1025 147.27 L 1030 146.57 L 1035 145.65 L 1040 144.50 L 1045 143.14 L 1050 141.57 L 1055 139.79 L 1060 137.82 L 1065 135.67 L 1070 133.34 L 1075 130.85 L 1080 128.21 L 1085 125.44 L 1090 122.53 L 1095 119.52 L 1100 116.42 L 1105 113.23 L 1110 109.98 L 1115 106.68 L 1120 103.35 L 1125 100.00 L 1130 96.65 L 1135 93.32 L 1140 90.02 L 1145 86.77 L 1150 83.58 L 1155 80.48 L 1160 77.47 L 1165 74.56 L 1170 71.79 L 1175 69.15 L 1180 66.66 L 1185 64.33 L 1190 62.18 L 1195 60.21 L 1200 58.43 L 1205 56.86 L 1210 55.50 L 1215 54.35 L 1220 53.43 L 1225 52.73 L 1230 52.26 L 1235 52.03 L 1240 52.03 L 1245 52.26 L 1250 52.73 L 1255 53.43 L 1260 54.35 L 1265 55.50 L 1270 56.86 L 1275 58.43 L 1280 60.21 L 1285 62.18 L 1290 64.33 L 1295 66.66 L 1300 69.15 L 1305 71.79 L 1310 74.56 L 1315 77.47 L 1320 80.48 L 1325 83.58 L 1330 86.77 L 1335 90.02 L 1340 93.32 L 1345 96.65 L 1350 100.00 L 1355 103.35 L 1360 106.68 L 1365 109.98 L 1370 113.23 L 1375 116.42 L 1380 119.52 L 1385 122.53 L 1390 125.44 L 1395 128.21 L 1400 130.85 L 1405 133.34 L 1410 135.67 L 1415 137.82 L 1420 139.79 L 1425 141.57 L 1430 143.14 L 1435 144.50 L 1440 145.65 L 1445 146.57 L 1450 147.27 L 1455 147.74 L 1460 147.97 L 1465 147.97 L 1470 147.74 L 1475 147.27 L 1480 146.57 L 1485 145.65 L 1490 144.50 L 1495 143.14 L 1500 141.57 L 1505 139.79 L 1510 137.82 L 1515 135.67 L 1520 133.34 L 1525 130.85 L 1530 128.21 L 1535 125.44 L 1540 122.53 L 1545 119.52 L 1550 116.42 L 1555 113.23 L 1560 109.98 L 1565 106.68 L 1570 103.35 L 1575 100.00 L 1580 96.65 L 1585 93.32 L 1590 90.02 L 1595 86.77 L 1600 83.58 L 1605 80.48 L 1610 77.47 L 1615 74.56 L 1620 71.79 L 1625 69.15 L 1630 66.66 L 1635 64.33 L 1640 62.18 L 1645 60.21 L 1650 58.43 L 1655 56.86 L 1660 55.50 L 1665 54.35 L 1670 53.43 L 1675 52.73 L 1680 52.26 L 1685 52.03 L 1690 52.03 L 1695 52.26 L 1700 52.73 L 1705 53.43 L 1710 54.35 L 1715 55.50 L 1720 56.86 L 1725 58.43 L 1730 60.21 L 1735 62.18 L 1740 64.33 L 1745 66.66 L 1750 69.15 L 1755 71.79 L 1760 74.56 L 1765 77.47 L 1770 80.48 L 1775 83.58 L 1780 86.77 L 1785 90.02 L 1790 93.32 L 1795 96.65`} stroke="url(#dg1)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
+        <path d={`M 0 100 L 0 100.00 L 5 96.65 L 10 93.32 L 15 90.02 L 20 86.77 L 25 83.58 L 30 80.48 L 35 77.47 L 40 74.56 L 45 71.79 L 50 69.15 L 55 66.66 L 60 64.33 L 65 62.18 L 70 60.21 L 75 58.43 L 80 56.86 L 85 55.50 L 90 54.35 L 95 53.43 L 100 52.73 L 105 52.26 L 110 52.03 L 115 52.03 L 120 52.26 L 125 52.73 L 130 53.43 L 135 54.35 L 140 55.50 L 145 56.86 L 150 58.43 L 155 60.21 L 160 62.18 L 165 64.33 L 170 66.66 L 175 69.15 L 180 71.79 L 185 74.56 L 190 77.47 L 195 80.48 L 200 83.58 L 205 86.77 L 210 90.02 L 215 93.32 L 220 96.65 L 225 100.00 L 230 103.35 L 235 106.68 L 240 109.98 L 245 113.23 L 250 116.42 L 255 119.52 L 260 122.53 L 265 125.44 L 270 128.21 L 275 130.85 L 280 133.34 L 285 135.67 L 290 137.82 L 295 139.79 L 300 141.57 L 305 143.14 L 310 144.50 L 315 145.65 L 320 146.57 L 325 147.27 L 330 147.74 L 335 147.97 L 340 147.97 L 345 147.74 L 350 147.27 L 355 146.57 L 360 145.65 L 365 144.50 L 370 143.14 L 375 141.57 L 380 139.79 L 385 137.82 L 390 135.67 L 395 133.34 L 400 130.85 L 405 128.21 L 410 125.44 L 415 122.53 L 420 119.52 L 425 116.42 L 430 113.23 L 435 109.98 L 440 106.68 L 445 103.35 L 450 100.00 L 455 96.65 L 460 93.32 L 465 90.02 L 470 86.77 L 475 83.58 L 480 80.48 L 485 77.47 L 490 74.56 L 495 71.79 L 500 69.15 L 505 66.66 L 510 64.33 L 515 62.18 L 520 60.21 L 525 58.43 L 530 56.86 L 535 55.50 L 540 54.35 L 545 53.43 L 550 52.73 L 555 52.26 L 560 52.03 L 565 52.03 L 570 52.26 L 575 52.73 L 580 53.43 L 585 54.35 L 590 55.50 L 595 56.86 L 600 58.43 L 605 60.21 L 610 62.18 L 615 64.33 L 620 66.66 L 625 69.15 L 630 71.79 L 635 74.56 L 640 77.47 L 645 80.48 L 650 83.58 L 655 86.77 L 660 90.02 L 665 93.32 L 670 96.65 L 675 100.00 L 680 103.35 L 685 106.68 L 690 109.98 L 695 113.23 L 700 116.42 L 705 119.52 L 710 122.53 L 715 125.44 L 720 128.21 L 725 130.85 L 730 133.34 L 735 135.67 L 740 137.82 L 745 139.79 L 750 141.57 L 755 143.14 L 760 144.50 L 765 145.65 L 770 146.57 L 775 147.27 L 780 147.74 L 785 147.97 L 790 147.97 L 795 147.74 L 800 147.27 L 805 146.57 L 810 145.65 L 815 144.50 L 820 143.14 L 825 141.57 L 830 139.79 L 835 137.82 L 840 135.67 L 845 133.34 L 850 130.85 L 855 128.21 L 860 125.44 L 865 122.53 L 870 119.52 L 875 116.42 L 880 113.23 L 885 109.98 L 890 106.68 L 895 103.35 L 900 100.00 L 905 96.65 L 910 93.32 L 915 90.02 L 920 86.77 L 925 83.58 L 930 80.48 L 935 77.47 L 940 74.56 L 945 71.79 L 950 69.15 L 955 66.66 L 960 64.33 L 965 62.18 L 970 60.21 L 975 58.43 L 980 56.86 L 985 55.50 L 990 54.35 L 995 53.43 L 1000 52.73 L 1005 52.26 L 1010 52.03 L 1015 52.03 L 1020 52.26 L 1025 52.73 L 1030 53.43 L 1035 54.35 L 1040 55.50 L 1045 56.86 L 1050 58.43 L 1055 60.21 L 1060 62.18 L 1065 64.33 L 1070 66.66 L 1075 69.15 L 1080 71.79 L 1085 74.56 L 1090 77.47 L 1095 80.48 L 1100 83.58 L 1105 86.77 L 1110 90.02 L 1115 93.32 L 1120 96.65 L 1125 100.00 L 1130 103.35 L 1135 106.68 L 1140 109.98 L 1145 113.23 L 1150 116.42 L 1155 119.52 L 1160 122.53 L 1165 125.44 L 1170 128.21 L 1175 130.85 L 1180 133.34 L 1185 135.67 L 1190 137.82 L 1195 139.79 L 1200 141.57 L 1205 143.14 L 1210 144.50 L 1215 145.65 L 1220 146.57 L 1225 147.27 L 1230 147.74 L 1235 147.97 L 1240 147.97 L 1245 147.74 L 1250 147.27 L 1255 146.57 L 1260 145.65 L 1265 144.50 L 1270 143.14 L 1275 141.57 L 1280 139.79 L 1285 137.82 L 1290 135.67 L 1295 133.34 L 1300 130.85 L 1305 128.21 L 1310 125.44 L 1315 122.53 L 1320 119.52 L 1325 116.42 L 1330 113.23 L 1335 109.98 L 1340 106.68 L 1345 103.35 L 1350 100.00 L 1355 96.65 L 1360 93.32 L 1365 90.02 L 1370 86.77 L 1375 83.58 L 1380 80.48 L 1385 77.47 L 1390 74.56 L 1395 71.79 L 1400 69.15 L 1405 66.66 L 1410 64.33 L 1415 62.18 L 1420 60.21 L 1425 58.43 L 1430 56.86 L 1435 55.50 L 1440 54.35 L 1445 53.43 L 1450 52.73 L 1455 52.26 L 1460 52.03 L 1465 52.03 L 1470 52.26 L 1475 52.73 L 1480 53.43 L 1485 54.35 L 1490 55.50 L 1495 56.86 L 1500 58.43 L 1505 60.21 L 1510 62.18 L 1515 64.33 L 1520 66.66 L 1525 69.15 L 1530 71.79 L 1535 74.56 L 1540 77.47 L 1545 80.48 L 1550 83.58 L 1555 86.77 L 1560 90.02 L 1565 93.32 L 1570 96.65 L 1575 100.00 L 1580 103.35 L 1585 106.68 L 1590 109.98 L 1595 113.23 L 1600 116.42 L 1605 119.52 L 1610 122.53 L 1615 125.44 L 1620 128.21 L 1625 130.85 L 1630 133.34 L 1635 135.67 L 1640 137.82 L 1645 139.79 L 1650 141.57 L 1655 143.14 L 1660 144.50 L 1665 145.65 L 1670 146.57 L 1675 147.27 L 1680 147.74 L 1685 147.97 L 1690 147.97 L 1695 147.74 L 1700 147.27 L 1705 146.57 L 1710 145.65 L 1715 144.50 L 1720 143.14 L 1725 141.57 L 1730 139.79 L 1735 137.82 L 1740 135.67 L 1745 133.34 L 1750 130.85 L 1755 128.21 L 1760 125.44 L 1765 122.53 L 1770 119.52 L 1775 116.42 L 1780 113.23 L 1785 109.98 L 1790 106.68 L 1795 103.35`} stroke="url(#dg2)" strokeWidth="2.5" fill="none" filter="url(#dg)"/>
+        <g filter="url(#dg)"><line x1="0.0" y1="100.0" x2="0.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="0.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="0.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="25.0" y1="116.4" x2="25.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="25.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="25.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="50.0" y1="130.9" x2="50.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="50.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="50.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="75.0" y1="141.6" x2="75.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="75.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="75.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="100.0" y1="147.3" x2="100.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="100.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="100.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="125.0" y1="147.3" x2="125.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="125.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="125.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="150.0" y1="141.6" x2="150.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="150.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="150.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="175.0" y1="130.9" x2="175.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="175.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="175.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="200.0" y1="116.4" x2="200.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="200.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="200.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="225.0" y1="100.0" x2="225.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="225.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="225.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="250.0" y1="83.6" x2="250.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="250.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="250.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="275.0" y1="69.1" x2="275.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="275.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="275.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="300.0" y1="58.4" x2="300.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="300.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="300.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="325.0" y1="52.7" x2="325.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="325.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="325.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="350.0" y1="52.7" x2="350.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="350.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="350.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="375.0" y1="58.4" x2="375.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="375.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="375.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="400.0" y1="69.1" x2="400.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="400.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="400.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="425.0" y1="83.6" x2="425.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="425.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="425.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="450.0" y1="100.0" x2="450.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="450.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="450.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="475.0" y1="116.4" x2="475.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="475.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="475.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="500.0" y1="130.9" x2="500.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="500.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="500.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="525.0" y1="141.6" x2="525.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="525.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="525.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="550.0" y1="147.3" x2="550.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="550.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="550.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="575.0" y1="147.3" x2="575.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="575.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="575.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="600.0" y1="141.6" x2="600.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="600.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="600.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="625.0" y1="130.9" x2="625.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="625.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="625.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="650.0" y1="116.4" x2="650.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="650.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="650.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="675.0" y1="100.0" x2="675.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="675.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="675.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="700.0" y1="83.6" x2="700.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="700.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="700.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="725.0" y1="69.1" x2="725.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="725.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="725.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="750.0" y1="58.4" x2="750.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="750.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="750.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="775.0" y1="52.7" x2="775.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="775.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="775.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="800.0" y1="52.7" x2="800.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="800.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="800.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="825.0" y1="58.4" x2="825.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="825.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="825.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="850.0" y1="69.1" x2="850.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="850.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="850.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="875.0" y1="83.6" x2="875.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="875.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="875.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="900.0" y1="100.0" x2="900.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="900.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="900.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="925.0" y1="116.4" x2="925.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="925.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="925.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="950.0" y1="130.9" x2="950.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="950.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="950.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="975.0" y1="141.6" x2="975.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="975.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="975.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1000.0" y1="147.3" x2="1000.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1000.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1000.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1025.0" y1="147.3" x2="1025.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1025.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1025.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1050.0" y1="141.6" x2="1050.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1050.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1050.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1075.0" y1="130.9" x2="1075.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1075.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1075.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1100.0" y1="116.4" x2="1100.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1100.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1100.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1125.0" y1="100.0" x2="1125.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1125.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1125.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1150.0" y1="83.6" x2="1150.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1150.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1150.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1175.0" y1="69.1" x2="1175.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1175.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1175.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1200.0" y1="58.4" x2="1200.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1200.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1200.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1225.0" y1="52.7" x2="1225.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1225.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1225.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1250.0" y1="52.7" x2="1250.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1250.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1250.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1275.0" y1="58.4" x2="1275.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1275.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1275.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1300.0" y1="69.1" x2="1300.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1300.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1300.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1325.0" y1="83.6" x2="1325.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1325.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1325.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1350.0" y1="100.0" x2="1350.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1350.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1350.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1375.0" y1="116.4" x2="1375.0" y2="83.6" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1375.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1375.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1400.0" y1="130.9" x2="1400.0" y2="69.1" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1400.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1400.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1425.0" y1="141.6" x2="1425.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1425.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1425.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1450.0" y1="147.3" x2="1450.0" y2="52.7" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1450.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1450.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1475.0" y1="147.3" x2="1475.0" y2="52.7" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1475.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1475.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1500.0" y1="141.6" x2="1500.0" y2="58.4" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1500.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1500.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1525.0" y1="130.9" x2="1525.0" y2="69.1" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1525.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1525.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1550.0" y1="116.4" x2="1550.0" y2="83.6" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1550.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1550.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1575.0" y1="100.0" x2="1575.0" y2="100.0" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1575.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1575.0" cy="100.0" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1600.0" y1="83.6" x2="1600.0" y2="116.4" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1600.0" cy="83.6" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1600.0" cy="116.4" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1625.0" y1="69.1" x2="1625.0" y2="130.9" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1625.0" cy="69.1" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1625.0" cy="130.9" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1650.0" y1="58.4" x2="1650.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1650.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1650.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1675.0" y1="52.7" x2="1675.0" y2="147.3" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1675.0" cy="52.7" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1675.0" cy="147.3" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1700.0" y1="52.7" x2="1700.0" y2="147.3" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1700.0" cy="52.7" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1700.0" cy="147.3" r="3" fill="#a855f7" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1725.0" y1="58.4" x2="1725.0" y2="141.6" stroke="#7c3aed" strokeWidth="1.2" opacity="0.65"/><circle cx="1725.0" cy="58.4" r="3" fill="#7c3aed" opacity="0.9"/><circle cx="1725.0" cy="141.6" r="3" fill="#7c3aed" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1750.0" y1="69.1" x2="1750.0" y2="130.9" stroke="#5ce1e6" strokeWidth="1.2" opacity="0.65"/><circle cx="1750.0" cy="69.1" r="3" fill="#5ce1e6" opacity="0.9"/><circle cx="1750.0" cy="130.9" r="3" fill="#5ce1e6" opacity="0.9"/></g>
+        <g filter="url(#dg)"><line x1="1775.0" y1="83.6" x2="1775.0" y2="116.4" stroke="#a855f7" strokeWidth="1.2" opacity="0.65"/><circle cx="1775.0" cy="83.6" r="3" fill="#a855f7" opacity="0.9"/><circle cx="1775.0" cy="116.4" r="3" fill="#a855f7" opacity="0.9"/></g>
+      </svg>
+    </div>
+  )
 }
-.cc-tl { top: -1px;  left: -1px;  background: var(--teal);   box-shadow: 0 0 8px var(--teal); animation-delay: 0s; }
-.cc-tr { top: -1px;  right: -1px; background: var(--purple-light); box-shadow: 0 0 8px var(--purple-light); animation-delay: .75s; }
-.cc-bl { bottom: -1px; left: -1px;  background: var(--purple-light); box-shadow: 0 0 8px var(--purple-light); animation-delay: 1.5s; }
-.cc-br { bottom: -1px; right: -1px; background: var(--teal);   box-shadow: 0 0 8px var(--teal); animation-delay: 2.25s; }
-@keyframes ccNodePulse { 0%,100%{opacity:.9;transform:scale(1)} 50%{opacity:.25;transform:scale(1.6)} }
-
-/* Scan line sweep on hover */
-.cc-scan {
-  position: absolute; left: 0; right: 0; height: 2px; z-index: 4; pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(92,225,230,.7), transparent);
-  top: -100%; opacity: 0;
-  transition: none;
-}
-.cert-card:hover .cc-scan {
-  animation: scanSweep 1.1s cubic-bezier(.4,0,.6,1) forwards;
-}
-@keyframes scanSweep {
-  0%   { top: -2px;   opacity: 1; }
-  90%  { top: 100%;   opacity: .5; }
-  100% { top: 100%;   opacity: 0; }
+/* ── Bot Avatar ── */
+function BotAvatar({ size = 32 }) {
+  return (
+    <div className="bot-av" style={{ width: size, height: size }}>
+      <img src="/profile.jpeg" alt="Lucky" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'top center' }}/>
+      <span className="bot-av-dot"/>
+    </div>
+  )
 }
 
-/* Image area */
-.cert-img-wrap {
-  position: relative; height: 170px;
-  background: linear-gradient(135deg,#0f1726,#1a2a40);
-  overflow: hidden;
-  border-bottom: 1px solid rgba(92,225,230,.12);
+/* ── Chatbot ── */
+const QUICK_CHIPS = ['Skills 🛠️','Projects 🚀','Education 🎓','Contact 📬','Research 📄','Experience 💼']
+
+function Chatbot() {
+  const [open, setOpen] = useState(false)
+  const [msgs, setMsgs] = useState([{ from:'bot', text:"Hi! I'm **Lucky's AI** ✨\nAsk me anything — skills, projects, research, or how to reach her!" }])
+  const [input, setInput] = useState('')
+  const [typing, setTyping] = useState(false)
+  const [chipsUsed, setChipsUsed] = useState(false)
+  const endRef = useRef(null)
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs, typing])
+
+  function send(text) {
+    const q = (text || input).trim(); if (!q) return
+    setMsgs(m => [...m, { from:'user', text:q }])
+    setInput(''); setChipsUsed(true); setTyping(true)
+    setTimeout(() => {
+      setTyping(false)
+      setMsgs(m => [...m, { from:'bot', text: getBotReply(q) }])
+    }, 1200)
+  }
+
+  function renderText(t) {
+    return t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>')
+  }
+
+  return (
+    <div className="chatbot-container">
+      {open && (
+        <div className="chatbot-window">
+          {/* Header */}
+          <div className="chatbot-header">
+            <BotAvatar size={44}/>
+            <div className="cb-head-info">
+              <div className="cb-head-name">Lucky's AI Assistant</div>
+              <div className="cb-head-sub"><span className="cb-online-dot"/>Always available</div>
+            </div>
+            <button className="chatbot-close" onClick={() => setOpen(false)}>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/></svg>
+            </button>
+          </div>
+          {/* Intro */}
+          <div className="cb-intro">
+            <BotAvatar size={54}/>
+            <div className="cb-intro-text">
+              <p className="cb-intro-name">Lucky Kumari</p>
+              <p className="cb-intro-role">CSE Student · AI/ML Engineer</p>
+              <p className="cb-intro-note">Ask me anything about Lucky's work 👇</p>
+            </div>
+          </div>
+          {/* Messages */}
+          <div className="chatbot-messages">
+            {msgs.map((m,i) => (
+              <div key={i} className={`chatbot-msg ${m.from}`}>
+                {m.from === 'bot' && <BotAvatar size={26}/>}
+                <div className="msg-bubble" dangerouslySetInnerHTML={{ __html: renderText(m.text) }}/>
+              </div>
+            ))}
+            {typing && (
+              <div className="chatbot-msg bot">
+                <BotAvatar size={26}/>
+                <div className="msg-bubble typing-bubble">
+                  <span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/>
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+          {/* Quick chips */}
+          {!chipsUsed && (
+            <div className="cb-chips">
+              {QUICK_CHIPS.map(c => (
+                <button key={c} className="cb-chip" onClick={() => send(c)}>{c}</button>
+              ))}
+            </div>
+          )}
+          {/* Input */}
+          <div className="chatbot-input-row">
+            <input className="chatbot-input" value={input} placeholder="Ask about Lucky…"
+              onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}/>
+            <button className="chatbot-send" onClick={() => send()}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+      {/* FAB */}
+      <button className="chatbot-fab" onClick={() => setOpen(o => !o)} aria-label="Chat">
+        {open
+          ? <svg width="20" height="20" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/></svg>
+          : <img src="/profile.jpeg" alt="Lucky" className="fab-photo"/>
+        }
+        {!open && <span className="fab-ring"/>}
+        {!open && <span className="fab-ring fab-ring-2"/>}
+        {!open && <span className="fab-badge">AI</span>}
+      </button>
+    </div>
+  )
 }
-.cert-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .55s; }
-.cert-card:hover .cert-img-wrap img { transform: scale(1.07); }
-.cert-img-overlay {
-  position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, transparent 55%, rgba(8,12,20,.85) 100%);
-}
-.cert-no-img {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-  background: linear-gradient(135deg,#111827,#0a0f1e);
-  color: var(--muted); font-size: .8rem; text-align: center; padding: 12px;
-}
-.cert-badge-big {
-  font-size: 2rem; font-weight: 900; color: var(--teal);
-  display: block; text-shadow: 0 0 20px var(--teal);
-}
 
-/* Body */
-.cert-body { padding: 16px 18px 18px; }
-.cert-body h3 {
-  font-size: .88rem; font-weight: 700; color: var(--text);
-  margin-bottom: 8px; line-height: 1.45;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.cert-issuer {
-  display: flex; align-items: center; gap: 6px;
-  font-size: .78rem; color: var(--teal); margin-bottom: 10px; font-weight: 600;
-}
-.cert-issuer-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--teal); flex-shrink: 0;
-  box-shadow: 0 0 6px var(--teal);
-  animation: ccNodePulse 2.5s ease-in-out infinite;
-}
-.cert-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.cert-date { font-size: .73rem; color: var(--muted); }
-.cert-score {
-  font-size: .73rem; color: #f59e0b; font-weight: 700;
-  background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25);
-  padding: 2px 8px; border-radius: 20px;
+/* ── Contact Form ── */
+function ContactForm() {
+  const [form, setForm] = useState({ name:'', email:'', subject:'', message:'' })
+  const [sent, setSent] = useState(false)
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
+  function submit(e) {
+    e.preventDefault()
+    const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
+    window.open(`mailto:kumarilucky01437@gmail.com?subject=${encodeURIComponent(form.subject||'Portfolio Contact')}&body=${encodeURIComponent(body)}`)
+    setSent(true); setTimeout(() => setSent(false), 4000)
+  }
+  return (
+    <form className="contact-form" onSubmit={submit}>
+      <div className="cf-row">
+        <div className="cf-field"><label>Your Name</label><input value={form.name} onChange={set('name')} placeholder="John Doe" required/></div>
+        <div className="cf-field"><label>Your Email</label><input type="email" value={form.email} onChange={set('email')} placeholder="john@example.com" required/></div>
+      </div>
+      <div className="cf-field"><label>Subject</label><input value={form.subject} onChange={set('subject')} placeholder="Project collaboration, internship…"/></div>
+      <div className="cf-field"><label>Message</label><textarea rows={5} value={form.message} onChange={set('message')} placeholder="Tell me about your project…" required/></div>
+      <button type="submit" className="cf-submit">{sent ? '✅ Sent!' : '✉️ Send Message'}</button>
+    </form>
+  )
 }
 
-/* ═══════════════════════════════════════
-   RESEARCH
-═══════════════════════════════════════ */
-.research-card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 28px;
-  animation: float 9s ease-in-out infinite;
-  box-shadow: 0 20px 56px rgba(0,0,0,.35);
-  transition: transform .4s, border-color .3s, box-shadow .4s;
+/* ── Animated Hero Roles ── */
+const ROLES = ['CSE Student', 'AIML Enthusiast', 'Python Developer', 'ML Engineer']
+function HeroRoles() {
+  const [idx, setIdx] = useState(0)
+  const [visible, setVisible] = useState(true)
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setIdx(i => (i + 1) % ROLES.length)
+        setVisible(true)
+      }, 400)
+    }, 2200)
+    return () => clearInterval(cycle)
+  }, [])
+  return (
+    <div className="hero-roles-wrap">
+      <span className="hero-roles-prefix">I'm a </span>
+      <span className={`hero-role-animated ${visible ? 'role-in' : 'role-out'}`}>
+        {ROLES[idx]}
+      </span>
+    </div>
+  )
 }
-.research-card:hover { transform: translateY(-12px) rotateX(3deg); border-color: rgba(92,225,230,.4); box-shadow: 0 40px 80px rgba(0,0,0,.55), 0 0 40px rgba(92,225,230,.15); }
-.research-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
-.research-authors { font-size: .88rem; color: var(--muted); margin-bottom: 6px; }
-.research-venue { font-size: .85rem; color: var(--teal); margin-bottom: 12px; }
-.research-doi { font-size: .85rem; color: #3b82f6; font-weight: 500; }
-.research-doi:hover { color: var(--teal); }
-.research-pdf-btns { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
-.btn-pdf-view, .btn-pdf-download {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 18px; border-radius: 8px; font-size: .85rem; font-weight: 600;
-  text-decoration: none; transition: all .2s;
+
+/* ── Welcome Splash ── */
+function WelcomeSplash({ onDone }) {
+  const [phase, setPhase] = useState(0) // 0=in, 1=show, 2=out
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 200)
+    const t2 = setTimeout(() => setPhase(2), 2800)
+    const t3 = setTimeout(() => onDone(), 3500)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [])
+  return (
+    <div className={`splash ${phase >= 1 ? 'splash-in' : ''} ${phase === 2 ? 'splash-out' : ''}`} onClick={() => { setPhase(2); setTimeout(onDone, 600) }}>
+      <div className="splash-bg"/>
+      <div className="splash-particles">
+        {Array.from({length:20},(_,i)=>(
+          <div key={i} className="splash-dot" style={{
+            left:`${Math.random()*100}%`, top:`${Math.random()*100}%`,
+            width:`${3+Math.random()*5}px`, height:`${3+Math.random()*5}px`,
+            animationDelay:`${Math.random()*2}s`, animationDuration:`${3+Math.random()*4}s`
+          }}/>
+        ))}
+      </div>
+      <div className="splash-content">
+        <div className="splash-ring"/>
+        <img src="/profile.jpeg" alt="Lucky" className="splash-photo"/>
+        <div className="splash-welcome">Welcome to my Portfolio</div>
+        <div className="splash-name">{'{'}Lucky Kumari{'}'}</div>
+        <div className="splash-role">CSE Student · AI/ML Engineer · Python Developer</div>
+        <div className="splash-hint">Click anywhere to enter</div>
+      </div>
+    </div>
+  )
 }
-.btn-pdf-view { background: rgba(92,225,230,.12); color: var(--teal); border: 1px solid rgba(92,225,230,.3); }
-.btn-pdf-view:hover { background: rgba(92,225,230,.22); transform: translateY(-2px); }
-.btn-pdf-download { background: rgba(59,130,246,.12); color: #3b82f6; border: 1px solid rgba(59,130,246,.3); }
-.btn-pdf-download:hover { background: rgba(59,130,246,.22); transform: translateY(-2px); }
 
-/* ═══════════════════════════════════════
-   EXPERIENCE
-═══════════════════════════════════════ */
-.exp-list { display: flex; flex-direction: column; gap: 20px; }
-.exp-card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 26px;
-  box-shadow: 0 16px 48px rgba(0,0,0,.3);
-  transition: transform .4s, border-color .3s, box-shadow .4s;
-}
-.exp-card:hover { transform: translateY(-12px) rotateX(3deg) rotateY(2deg); border-color: rgba(92,225,230,.4); box-shadow: 0 40px 85px rgba(0,0,0,.5), 0 0 40px rgba(92,225,230,.14); }
-.exp-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
-.exp-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.exp-company { font-size: .88rem; color: var(--teal); }
-.exp-period { font-size: .8rem; color: var(--muted); white-space: nowrap; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; }
-.exp-points { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.exp-points li { font-size: .9rem; color: var(--muted); padding-left: 16px; position: relative; line-height: 1.65; }
-.exp-points li::before { content: '▸'; position: absolute; left: 0; color: var(--teal); font-size: .75rem; top: 3px; }
+/* ══════════════════════════════
+   MAIN APP
+══════════════════════════════ */
+export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
 
-/* ═══════════════════════════════════════
-   CONTACT
-═══════════════════════════════════════ */
-.contact-section { background: var(--bg2); padding: 80px 0; }
-.contact-inner { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
-.contact-grid { display: grid; grid-template-columns: 360px 1fr; gap: 40px; margin-top: 8px; }
+  return (
+    <>
+      {showSplash && <WelcomeSplash onDone={() => setShowSplash(false)}/>}
+      <div className={`main-wrapper ${showSplash ? 'main-hidden' : 'main-visible'}`}>
 
-.contact-info-card {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 32px;
-  display: flex; flex-direction: column; gap: 22px;
-  animation: float 8.5s ease-in-out infinite;
-  box-shadow: 0 24px 64px rgba(0,0,0,.4);
-  transition: transform .4s, box-shadow .4s;
-}
-.contact-info-card:hover { transform: translateY(-12px) rotateX(3deg) rotateY(-2deg); box-shadow: 0 48px 100px rgba(0,0,0,.55), 0 0 50px rgba(124,58,237,.18); }
-.ci-item { display: flex; align-items: flex-start; gap: 14px; }
-.ci-icon { font-size: 1.4rem; margin-top: 2px; flex-shrink: 0; }
-.ci-label { font-size: .75rem; color: var(--muted); display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .06em; }
-.ci-item a, .ci-item span { font-size: .9rem; color: var(--text); word-break: break-all; transition: color .2s; }
-.ci-item a:hover { color: var(--teal); }
-.ci-socials { display: flex; flex-direction: column; gap: 10px; }
-.ci-social-btn { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border); font-size: .88rem; font-weight: 600; transition: transform .25s, box-shadow .25s, border-color .25s, background .25s; }
-.ci-social-btn:hover { transform: translateY(-3px); }
-.github-btn  { color: #e2e8f0; } .github-btn:hover  { border-color: #e2e8f0; box-shadow: 0 8px 24px rgba(226,232,240,.15); background: rgba(226,232,240,.06); }
-.linkedin-btn{ color: #0077b5; } .linkedin-btn:hover { border-color: #0077b5; box-shadow: 0 8px 24px rgba(0,119,181,.2); background: rgba(0,119,181,.06); }
-.insta-btn   { color: #e1306c; } .insta-btn:hover   { border-color: #e1306c; box-shadow: 0 8px 24px rgba(225,48,108,.2); background: rgba(225,48,108,.06); }
+        {/* ── NAV ── */}
+        <nav className="nav">
+          <span className="brand">Lucky.ai</span>
+          <div className="nav-links">
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#certifications">Certificates</a>
+            <a href="#skills">Tech Stack</a>
+            <a href="#contact">Contact</a>
+            <a className="btn-nav-resume" href={profile.resumeUrl} download>⬇ Resume</a>
+          </div>
+        </nav>
 
-.contact-form {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 32px;
-  display: flex; flex-direction: column; gap: 18px;
-  animation: float 9.5s ease-in-out 1.2s infinite;
-  box-shadow: 0 24px 64px rgba(0,0,0,.4);
-  transition: transform .4s, box-shadow .4s;
-}
-.contact-form:hover { transform: translateY(-12px) rotateX(2deg) rotateY(2deg); box-shadow: 0 48px 100px rgba(0,0,0,.55), 0 0 50px rgba(92,225,230,.12); }
-.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.cf-field { display: flex; flex-direction: column; gap: 6px; }
-.cf-field label { font-size: .8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
-.cf-field input, .cf-field textarea { background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: .9rem; outline: none; transition: border-color .2s, box-shadow .2s; resize: vertical; font-family: inherit; }
-.cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--muted); }
-.cf-field input:focus, .cf-field textarea:focus { border-color: rgba(92,225,230,.5); box-shadow: 0 0 0 3px rgba(92,225,230,.08); }
-.cf-submit { padding: 13px 28px; border-radius: 12px; border: none; background: linear-gradient(135deg,#7c3aed,#2563eb); color: #fff; font-size: .95rem; font-weight: 700; cursor: pointer; transition: opacity .2s, transform .25s, box-shadow .25s; box-shadow: 0 0 30px rgba(124,58,237,.35); }
-.cf-submit:hover { opacity: .9; transform: translateY(-4px) scale(1.03); box-shadow: 0 0 55px rgba(124,58,237,.55); }
+        {/* ── HERO ── */}
+        <section className="hero" id="home">
+          <Particles/>
+          <div className="hero-blob"/>
+          <div className="hero-blob hero-blob-2"/>
+          {/* Floating background role words */}
+          <div className="hero-float-bg" aria-hidden="true">
+            {['CSE Student','AIML Enthusiast','Python Developer','ML Engineer'].map((r,i)=>(
+              <span key={r} className="hero-float-word" style={{'--fi':i}}>{r}</span>
+            ))}
+          </div>
+          <div className="hero-content">
+            <div className="hero-greeting">Hi, I am</div>
+            <div className="hero-name">
+              <span className="brace">{'{'}</span>Lucky Kumari<span className="brace">{'}'}</span>
+            </div>
+            <HeroRoles />
+            <p className="hero-desc">
+              B.Tech CSE student specializing in building intelligent applications with AI/ML and Python.
+              Currently focused on data science and production ML systems.
+            </p>
+            <div className="hero-btns">
+              <a className="btn-outline" href={profile.resumeUrl} download>⬇ Download CV</a>
+              <a className="btn-filled" href={profile.github} target="_blank" rel="noreferrer">View GitHub →</a>
+            </div>
+            <div className="hero-socials">
+              <a href={profile.github} target="_blank" rel="noreferrer" className="hs-link" title="GitHub">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <a href={profile.linkedin} target="_blank" rel="noreferrer" className="hs-link" title="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href={profile.instagram} target="_blank" rel="noreferrer" className="hs-link" title="@k11_lucky">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div className="hero-photo-wrap">
+            <div className="hero-photo-glow"/>
+            <img src={profile.photo} alt="Lucky Kumari" className="hero-photo"/>
+          </div>
+        </section>
 
-/* ═══════════════════════════════════════
-   CTA + DNA
-═══════════════════════════════════════ */
-.cta-section { position: relative; padding: 100px 60px 60px; text-align: center; overflow: hidden; }
-.cta-heading { font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 800; color: var(--text); margin-bottom: 12px; }
-.cta-sub { font-size: 1rem; color: var(--muted); margin-bottom: 36px; }
-.cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
-.btn-cta { display: inline-block; padding: 14px 36px; background: var(--blue-btn); color: #fff; border-radius: 10px; font-size: 1rem; font-weight: 700; transition: opacity .2s, transform .3s, box-shadow .3s; animation: float 6.5s ease-in-out 1s infinite; }
-.btn-cta:hover { opacity: .88; transform: translateY(-7px) scale(1.06); box-shadow: 0 0 55px rgba(37,99,235,.6); }
-.btn-cta-outline { display: inline-block; padding: 14px 36px; border: 2px solid var(--teal); color: var(--teal); border-radius: 10px; font-size: 1rem; font-weight: 700; transition: background .2s, transform .3s, box-shadow .3s; animation: float 7.5s ease-in-out .5s infinite; }
-.btn-cta-outline:hover { background: rgba(92,225,230,.1); transform: translateY(-7px) scale(1.06); box-shadow: 0 0 48px rgba(92,225,230,.4); }
+        {/* ── BIO STRIP ── */}
+        <Reveal>
+          <div className="bio-strip">
+            <div className="bio-strip-inner">
+              <div className="bio-stat"><span className="bio-num">8.46</span><span className="bio-label">SGPA</span></div>
+              <div className="bio-div"/>
+              <div className="bio-stat"><span className="bio-num">7+</span><span className="bio-label">Projects</span></div>
+              <div className="bio-div"/>
+              <div className="bio-stat"><span className="bio-num">12+</span><span className="bio-label">Certifications</span></div>
+              <div className="bio-div"/>
+              <div className="bio-stat"><span className="bio-num">2</span><span className="bio-label">Internships</span></div>
+              <div className="bio-div"/>
+              <div className="bio-stat"><span className="bio-num">1</span><span className="bio-label">Research Paper</span></div>
+            </div>
+          </div>
+        </Reveal>
 
-.dna-wrap { width: 100%; max-width: 960px; margin: 0 auto; overflow: hidden; position: relative; }
-.dna-svg { height: 200px; animation: dnaScroll 12s linear infinite; display: block; }
-@keyframes dnaScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        {/* ── ABOUT ── */}
+        <section id="about" className="section">
+          <Reveal><p className="section-label">About me</p></Reveal>
+          <Reveal delay={80}><h2 className="section-heading">About me</h2></Reveal>
+          <div className="about-row">
+            <Reveal delay={120} className="about-left-wrap">
+              <div className="about-terminal">
+                <div className="terminal-bar">
+                  <span className="dot red"/><span className="dot yellow"/><span className="dot green"/>
+                  <span className="terminal-title">lucky@portfolio:~</span>
+                </div>
+                <div className="terminal-body">
+                  <div className="terminal-prompt"><span className="star">✦</span><span className="cmd">whoami</span></div>
+                  <p className="terminal-text">{profile.bio}</p>
+                  <p className="terminal-text" style={{marginTop:'12px',color:'#5ce1e6'}}>
+                    CSE'27 · IIMT University · Golden Badge Python (HackerRank)
+                  </p>
+                  <div className="terminal-cursor"/>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal delay={220} className="about-right-wrap">
+              <div className="about-cards">
+                {[
+                  { icon:'🎓', title:'Education',   val:'IIMT University, B.Tech CSE (2023–27)' },
+                  { icon:'📍', title:'Location',    val:'Delhi/NCR, India' },
+                  { icon:'💼', title:'Experience',  val:'2 Internships · AI & Full Stack' },
+                  { icon:'🏆', title:'Achievement', val:'SGPA 8.46/10 · HackerRank Gold' },
+                ].map(c=>(
+                  <div key={c.title} className="about-card">
+                    <span className="about-card-icon">{c.icon}</span>
+                    <div><p className="about-card-title">{c.title}</p><p className="about-card-val">{c.val}</p></div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </section>
 
-/* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 40px 60px; }
-.footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; align-items: start; }
-.footer-social { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-.social-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: border-color .2s, transform .2s, box-shadow .2s; }
-.social-icon:hover { border-color: var(--teal); transform: translateY(-5px); box-shadow: 0 10px 24px rgba(92,225,230,.25); }
-.footer-col h4 { font-size: .85rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-.footer-col p, .footer-col a { display: block; font-size: .88rem; color: var(--muted); margin-bottom: 6px; transition: color .2s; }
-.footer-col a:hover { color: var(--teal); }
-.footer-links { display: flex; flex-direction: column; gap: 6px; }
-.footer-links h4 { font-size: .85rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-.footer-links a { font-size: .88rem; color: var(--muted); transition: color .2s; }
-.footer-links a:hover { color: var(--teal); }
-.footer-bottom { max-width: 1100px; margin: 32px auto 0; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-size: .82rem; color: var(--muted); }
+        {/* ── SKILLS ── */}
+        <div className="skills-section" id="skills">
+          <div className="skills-inner">
+            <Reveal><p className="section-label">Tech Stack</p></Reveal>
+            <Reveal delay={80}><h2 className="section-heading">Tech Stack</h2></Reveal>
+            <Reveal delay={160}><p className="section-sub">Technologies I work with daily to build AI-powered systems.</p></Reveal>
+            <Reveal delay={200}>
+              <div className="skills-circuit"><NeuralSkills/></div>
+            </Reveal>
+            <div className="skill-badges-grid">
+              {skills.map((s,i)=>(
+                <Reveal key={s.name} delay={i*40}>
+                  <div className="skill-badge" style={{'--sc':s.color,'--sb':s.bg}}>
+                    <div className="skill-badge-logo">{s.logo}</div>
+                    <span className="skill-badge-name">{s.name}</span>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
 
-/* ═══════════════════════════════════════
-   CHATBOT — premium
-═══════════════════════════════════════ */
-.chatbot-container { position: fixed; bottom: 28px; right: 28px; z-index: 999; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+        {/* ── PROJECTS ── */}
+        <section id="projects" className="section">
+          <Reveal><p className="section-label">Projects</p></Reveal>
+          <Reveal delay={80}><h2 className="section-heading">Projects</h2></Reveal>
+          <Reveal delay={120}><p className="section-sub">Crafted with real data, real models, production-ready code.</p></Reveal>
+          <div className="project-grid">
+            {projects.map((p,i)=>(
+              <Reveal key={p.name} delay={i*60}>
+                <article className="project-card">
+                  <div className="project-thumb" style={{background:`linear-gradient(135deg,${p.color}18,${p.color}38)`}}>
+                    <span className="project-emoji">{p.icon}</span>
+                    <div className="thumb-bar">
+                      <span style={{background:'#ef4444'}}/><span style={{background:'#f59e0b'}}/><span style={{background:'#22c55e'}}/>
+                    </div>
+                  </div>
+                  <div className="project-info">
+                    <h3>{p.name}</h3><p>{p.desc}</p>
+                    <div className="project-tags">{p.stack.map(t=><span key={t} className="project-tag">{t}</span>)}</div>
+                    <div className="project-links">
+                      <a href={p.url} target="_blank" rel="noreferrer">View →</a>
+                      <a href={p.url} target="_blank" rel="noreferrer">Code</a>
+                    </div>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </section>
 
-.chatbot-fab {
-  position: relative; width: 64px; height: 64px; border-radius: 50%; border: none;
-  background: transparent; cursor: pointer; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
-}
-.chatbot-fab:hover { transform: scale(1.12); }
-.fab-photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: top center; border: 2.5px solid #7c3aed; box-shadow: 0 0 0 4px rgba(124,58,237,.25), 0 12px 44px rgba(124,58,237,.55); }
-.fab-ring {
-  position: absolute; inset: -7px; border-radius: 50%;
-  border: 2px solid rgba(124,58,237,.45);
-  animation: fabRingPulse 2.5s ease-in-out infinite;
-  pointer-events: none;
-}
-.fab-ring-2 { animation-delay: 1.2s; inset: -14px; border-color: rgba(92,225,230,.2); }
-@keyframes fabRingPulse { 0%,100%{transform:scale(1);opacity:.7} 50%{transform:scale(1.2);opacity:0} }
-.fab-badge { position: absolute; top: -2px; right: -4px; background: linear-gradient(135deg,#7c3aed,#5ce1e6); color: #fff; font-size: .58rem; font-weight: 900; letter-spacing: .05em; padding: 2px 5px; border-radius: 8px; box-shadow: 0 2px 8px rgba(124,58,237,.5); pointer-events: none; }
-.chatbot-fab svg { color: #fff; }
+        {/* ── CERTIFICATES ── */}
+        <div className="cert-section" id="certifications">
+          {/* Neural wire SVG background */}
+          <svg className="cert-wire-bg" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <filter id="cwg"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            {/* horizontal wires */}
+            {[80,180,280,380,460].map((y,i)=>(
+              <line key={`h${i}`} x1="0" y1={y} x2="1200" y2={y} stroke={i%2===0?'rgba(92,225,230,0.07)':'rgba(124,58,237,0.06)'} strokeWidth="1" strokeDasharray="8 6" filter="url(#cwg)">
+                <animate attributeName="stroke-dashoffset" from="0" to={i%2===0?'-28':'28'} dur={`${5+i*1.2}s`} repeatCount="indefinite"/>
+              </line>
+            ))}
+            {/* vertical wires */}
+            {[120,280,420,580,720,860,1000,1140].map((x,i)=>(
+              <line key={`v${i}`} x1={x} y1="0" x2={x} y2="500" stroke={i%2===0?'rgba(124,58,237,0.06)':'rgba(92,225,230,0.05)'} strokeWidth="1" strokeDasharray="6 8" filter="url(#cwg)">
+                <animate attributeName="stroke-dashoffset" from="0" to={i%2===0?'-28':'28'} dur={`${6+i*0.8}s`} repeatCount="indefinite"/>
+              </line>
+            ))}
+            {/* nodes at intersections */}
+            {[[120,80],[280,180],[420,280],[580,80],[720,380],[860,180],[1000,280],[1140,80],[280,380],[580,280],[860,380],[420,80],[720,180],[1000,80]].map(([x,y],i)=>(
+              <circle key={`n${i}`} cx={x} cy={y} r={i%3===0?4:2.5} fill={i%2===0?'#5ce1e6':'#7c3aed'} opacity="0.55" filter="url(#cwg)">
+                <animate attributeName="opacity" values="0.55;0.15;0.55" dur={`${3+i*0.4}s`} repeatCount="indefinite"/>
+                <animate attributeName="r" values={i%3===0?'4;6;4':'2.5;4;2.5'} dur={`${4+i*0.3}s`} repeatCount="indefinite"/>
+              </circle>
+            ))}
+          </svg>
 
-.chatbot-window { width: 365px; background: #090d1a; border: 1px solid rgba(124,58,237,.3); border-radius: 22px; overflow: hidden; box-shadow: 0 44px 110px rgba(0,0,0,.8), 0 0 90px rgba(124,58,237,.22); animation: cbSlideUp .38s cubic-bezier(.175,.885,.32,1.275); display: flex; flex-direction: column; }
-@keyframes cbSlideUp { from{opacity:0;transform:translateY(28px) scale(.93)} to{opacity:1;transform:translateY(0) scale(1)} }
+          <div className="cert-inner">
+            <Reveal><p className="section-label">Certifications</p></Reveal>
+            <Reveal delay={80}><h2 className="section-heading">My Certifications</h2></Reveal>
+            <Reveal delay={120}><p className="section-sub">14 verified credentials across AI/ML, Cloud, Java, and Cybersecurity.</p></Reveal>
+            <div className="cert-grid">
+              {certifications.map((c,i)=>(
+                <Reveal key={c.title} delay={i*55}>
+                  <div className="cert-card" style={{'--ci':i}}>
+                    {/* corner nodes */}
+                    <span className="cc-node cc-tl"/><span className="cc-node cc-tr"/>
+                    <span className="cc-node cc-bl"/><span className="cc-node cc-br"/>
+                    {/* scan line */}
+                    <span className="cc-scan"/>
+                    <div className="cert-img-wrap">
+                      {c.image
+                        ? <img src={c.image} alt={c.title} loading="lazy"/>
+                        : <div className="cert-no-img"><span className="cert-badge-big">{c.badge}</span><span>{c.issuer}</span></div>}
+                      <div className="cert-img-overlay"/>
+                    </div>
+                    <div className="cert-body">
+                      <h3>{c.title}</h3>
+                      <p className="cert-issuer">
+                        <span className="cert-issuer-dot"/>
+                        {c.issuer}
+                      </p>
+                      <div className="cert-footer">
+                        <span className="cert-date">{c.date}</span>
+                        {c.note && <span className="cert-score">✦ {c.note}</span>}
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
 
-.chatbot-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: linear-gradient(135deg,rgba(124,58,237,.32),rgba(37,99,235,.2)); border-bottom: 1px solid rgba(124,58,237,.2); backdrop-filter: blur(12px); }
-.cb-head-info { flex: 1; }
-.cb-head-name { font-size: .92rem; font-weight: 800; color: #fff; }
-.cb-head-sub { display: flex; align-items: center; gap: 5px; font-size: .72rem; color: rgba(255,255,255,.5); margin-top: 2px; }
-.cb-online-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulseGreen 2s infinite; flex-shrink: 0; }
-@keyframes pulseGreen { 0%,100%{opacity:1} 50%{opacity:.3} }
-.chatbot-close { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; width: 28px; height: 28px; cursor: pointer; color: rgba(255,255,255,.55); display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
-.chatbot-close:hover { background: rgba(255,255,255,.18); color: #fff; }
+        {/* ── EXPERIENCE ── */}
+        <section className="section" id="experience">
+          <Reveal><p className="section-label">Experience</p></Reveal>
+          <Reveal delay={80}><h2 className="section-heading">Work Experience</h2></Reveal>
+          <div className="exp-list">
+            {experience.map((e,i)=>(
+              <Reveal key={e.title} delay={i*100}>
+                <div className="exp-card">
+                  <div className="exp-header">
+                    <div><h3>{e.title}</h3><p className="exp-company">{e.company}</p></div>
+                    <span className="exp-period">{e.period}</span>
+                  </div>
+                  <ul className="exp-points">{e.points.map((pt,j)=><li key={j}>{pt}</li>)}</ul>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
 
-.cb-intro { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: linear-gradient(135deg,rgba(124,58,237,.16),rgba(92,225,230,.06)); border-bottom: 1px solid rgba(255,255,255,.05); }
-.cb-intro-text {}
-.cb-intro-name { font-size: .95rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
-.cb-intro-role { font-size: .75rem; color: var(--teal); margin-bottom: 4px; }
-.cb-intro-note { font-size: .73rem; color: rgba(255,255,255,.4); }
+        {/* ── RESEARCH ── */}
+        <section id="research" className="section">
+          <Reveal><p className="section-label">Research</p></Reveal>
+          <Reveal delay={80}><h2 className="section-heading">Publications</h2></Reveal>
+          <Reveal delay={120}>
+            <div className="research-card">
+              <h3>Efficient Detection of Offensive Social Media Comments in Assamese language Using LSTM</h3>
+              <p className="research-authors">Komal Kumar, Lucky Kumari, Kritansh Pandey, Dr. Shivani Dubey, Neha Gupta, Vikas Yadav</p>
+              <p className="research-venue">IRJCS, Volume 12, Issue 12 (December 2025)</p>
+              <a href="https://doi.org/10.26562/irjcs.2025.v1212.08" className="research-doi" target="_blank" rel="noreferrer">doi.org/10.26562/irjcs.2025.v1212.08</a>
+              <div className="research-pdf-btns">
+                <a href="/research_paper.pdf" target="_blank" rel="noreferrer" className="btn-pdf-view">📄 View Paper</a>
+                <a href="/research_paper.pdf" download="Lucky_Kumari_Research_Paper.pdf" className="btn-pdf-download">⬇ Download PDF</a>
+              </div>
+            </div>
+          </Reveal>
+        </section>
 
-.bot-av { border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; border: 2px solid rgba(124,58,237,.65); box-shadow: 0 0 14px rgba(124,58,237,.45); }
-.bot-av-dot { position: absolute; bottom: 1px; right: 1px; width: 8px; height: 8px; border-radius: 50%; background: #4ade80; border: 1.5px solid #090d1a; }
+        {/* ── CONTACT ── */}
+        <section id="contact" className="contact-section">
+          <div className="contact-inner">
+            <Reveal><p className="section-label">Get In Touch</p></Reveal>
+            <Reveal delay={80}><h2 className="section-heading">Contact Me</h2></Reveal>
+            <Reveal delay={120}><p className="section-sub">Have a project or opportunity? Let's collaborate!</p></Reveal>
+            <div className="contact-grid">
+              <Reveal delay={160}>
+                <div className="contact-info-card">
+                  <div className="ci-item"><span className="ci-icon">📧</span><div><span className="ci-label">Email</span><a href={`mailto:${profile.email}`}>{profile.email}</a></div></div>
+                  <div className="ci-item"><span className="ci-icon">📞</span><div><span className="ci-label">Phone</span><a href={`tel:${profile.phone}`}>{profile.phone}</a></div></div>
+                  <div className="ci-item"><span className="ci-icon">📍</span><div><span className="ci-label">Location</span><span>{profile.location}</span></div></div>
+                  <div className="ci-socials">
+                    <a href={profile.github}    target="_blank" rel="noreferrer" className="ci-social-btn github-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> GitHub
+                    </a>
+                    <a href={profile.linkedin}  target="_blank" rel="noreferrer" className="ci-social-btn linkedin-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn
+                    </a>
+                    <a href={profile.instagram} target="_blank" rel="noreferrer" className="ci-social-btn insta-btn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> @k11_lucky
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal delay={240}><ContactForm/></Reveal>
+            </div>
+          </div>
+        </section>
 
-.chatbot-messages { flex: 1; max-height: 240px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; scrollbar-color: rgba(124,58,237,.3) transparent; }
-.chatbot-msg { display: flex; align-items: flex-end; gap: 8px; }
-.chatbot-msg.user { flex-direction: row-reverse; }
-.msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: .84rem; line-height: 1.6; animation: msgPop .25s cubic-bezier(.175,.885,.32,1.275); }
-@keyframes msgPop { from{opacity:0;transform:scale(.86) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.chatbot-msg.bot  .msg-bubble { background: rgba(255,255,255,.06); border: 1px solid rgba(124,58,237,.22); color: rgba(255,255,255,.9); border-radius: 4px 16px 16px 16px; }
-.chatbot-msg.user .msg-bubble { background: linear-gradient(135deg,#7c3aed,#2563eb); color: #fff; border-radius: 16px 4px 16px 16px; box-shadow: 0 4px 18px rgba(124,58,237,.38); }
-.typing-bubble { display: flex !important; align-items: center; gap: 5px; padding: 12px 16px !important; min-width: 56px; }
-.typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: typingBounce 1.2s ease-in-out infinite; }
-.typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
-@keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:.5} 30%{transform:translateY(-8px);opacity:1} }
+        {/* ── CTA ── */}
+        <section className="cta-section">
+          <Reveal><h2 className="cta-heading">Let's start something great together</h2></Reveal>
+          <Reveal delay={80}><p className="cta-sub">Open to AI/ML roles, research collaborations, and freelance projects.</p></Reveal>
+          <Reveal delay={160}>
+            <div className="cta-btns">
+              <a className="btn-cta" href={`mailto:${profile.email}`}>Get in touch</a>
+              <a className="btn-cta-outline" href={profile.resumeUrl} download>⬇ Download Resume</a>
+            </div>
+          </Reveal>
+          <DnaHelix/>
+        </section>
 
-.cb-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 14px 8px; border-top: 1px solid rgba(255,255,255,.05); }
-.cb-chip { padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(124,58,237,.4); background: rgba(124,58,237,.1); color: rgba(255,255,255,.7); font-size: .76rem; font-weight: 600; cursor: pointer; transition: background .2s, border-color .2s, transform .2s, color .2s; }
-.cb-chip:hover { background: rgba(124,58,237,.3); border-color: rgba(124,58,237,.8); color: #fff; transform: translateY(-2px); }
+        {/* ── FOOTER ── */}
+        <footer>
+          <div className="footer-grid">
+            <div className="footer-col">
+              <p className="brand" style={{fontSize:'1.2rem',marginBottom:'8px'}}>Lucky.ai</p>
+              <p style={{fontSize:'.85rem',color:'var(--muted)',marginBottom:'16px',maxWidth:'200px'}}>AI/ML Engineer · CSE Student · Python Developer</p>
+              <div className="footer-social">
+                {[
+                  { href:profile.github,    svg:<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> },
+                  { href:profile.linkedin,  svg:<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                  { href:profile.instagram, svg:<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> },
+                  { href:`mailto:${profile.email}`, svg:<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> },
+                ].map((s,i) => <a key={i} className="social-icon" href={s.href} target="_blank" rel="noreferrer">{s.svg}</a>)}
+              </div>
+            </div>
+            <div className="footer-col">
+              <h4>Contact</h4>
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+              <a href={`tel:${profile.phone}`}>{profile.phone}</a>
+              <p>Delhi/NCR, India</p>
+            </div>
+            <div className="footer-links">
+              <h4>Quick Links</h4>
+              <a href="#about">About me</a>
+              <a href="#projects">Projects</a>
+              <a href="#certifications">Certificates</a>
+              <a href="#skills">Tech Stack</a>
+              <a href="#contact">Contact</a>
+            </div>
+          </div>
+          <p className="footer-bottom">© 2025 Lucky Kumari · All rights reserved</p>
+        </footer>
 
-.chatbot-input-row { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid rgba(255,255,255,.05); background: rgba(0,0,0,.25); }
-.chatbot-input { flex: 1; background: rgba(255,255,255,.07); border: 1px solid rgba(124,58,237,.25); border-radius: 12px; padding: 10px 14px; color: #fff; font-size: .84rem; outline: none; transition: border-color .2s, box-shadow .2s; font-family: inherit; }
-.chatbot-input::placeholder { color: rgba(255,255,255,.28); }
-.chatbot-input:focus { border-color: rgba(124,58,237,.6); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
-.chatbot-send { width: 40px; height: 40px; border-radius: 12px; border: none; background: linear-gradient(135deg,#7c3aed,#2563eb); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: transform .2s, box-shadow .2s; box-shadow: 0 4px 16px rgba(124,58,237,.45); }
-.chatbot-send:hover { transform: scale(1.12) translateY(-1px); box-shadow: 0 8px 26px rgba(124,58,237,.65); }
-
-/* ═══════════════════════════════════════
-   KEYFRAMES
-═══════════════════════════════════════ */
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
-@keyframes pulseGlow { 0%,100%{opacity:.7} 50%{opacity:1} }
-@keyframes blobMorph { 0%,100%{border-radius:50% 50% 50% 50%/40% 40% 60% 60%} 25%{border-radius:60% 40% 55% 45%/55% 45% 55% 45%} 50%{border-radius:45% 55% 40% 60%/50% 60% 40% 50%} 75%{border-radius:55% 45% 60% 40%/45% 55% 45% 55%} }
-@keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
-@media (max-width:900px) {
-  .nav { padding: 14px 20px; }
-  .nav-links { gap: 12px; font-size: .8rem; }
-  .hero { padding: 100px 20px 60px; flex-direction: column; }
-  .hero-blob { width: 300px; height: 300px; right: 10px; opacity: .4; }
-  .hero-photo-wrap { position: static; transform: none !important; width: 240px; height: 300px; margin: 0 auto; animation: float 7s ease-in-out infinite; }
-  .section { padding: 60px 20px; }
-  .skills-inner, .cert-inner, .contact-inner { padding: 0 20px; }
-  .about-row { flex-direction: column; }
-  .project-grid { grid-template-columns: 1fr; }
-  .contact-grid { grid-template-columns: 1fr; }
-  .cf-row { grid-template-columns: 1fr; }
-  .bio-strip { padding: 20px; }
-  .bio-stat { padding: 10px 20px; }
-  .cta-section { padding: 60px 20px; }
-  footer { padding: 32px 20px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 24px; }
-  .skill-badges-grid { grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 12px; }
-  .chatbot-window { width: calc(100vw - 40px); }
-}
-@media (max-width:600px) {
-  .nav-links { display: none; }
-  .hero-photo-wrap { width: 190px; height: 240px; }
+        <Chatbot/>
+      </div>
+    </>
+  )
 }
